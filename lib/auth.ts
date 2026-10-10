@@ -11,6 +11,7 @@ import { audit, AUDIT_ACTIONS } from "@/lib/audit";
 // ---------------------------------------------------------------------------
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
   session: {
     strategy: "jwt",
     maxAge: 24 * 60 * 60, // 24h
