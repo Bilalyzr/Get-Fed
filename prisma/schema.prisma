@@ -1,0 +1,213 @@
+// Food Worth Saving — Real-Time Surplus Food Coordination & Recovery Platform
+// Prisma schema (PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  PROVIDER
+  RECIPIENT
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
+}
+
+enum ListingStatus {
+  DRAFT
+  AVAILABLE
+  PARTIALLY_RESERVED
+  FULLY_RESERVED
+  PICKUP_IN_PROGRESS
+  COLLECTED
+  EXPIRED
+  CANCELLED
+}
+
+enum ClaimStatus {
+  REQUESTED
+  RESERVED
+  PICKUP_IN_PROGRESS
+  COLLECTED
+  CANCELLED
+  NO_SHOW
+  EXPIRED
+}
+
+enum FoodCategory {
+  COOKED_MEALS
+  BAKERY
+  PACKAGED
+  PRODUCE
+  DAIRY
+  BEVERAGES
+  OTHER
+}
+
+enum FoodUnit {
+  PORTIONS
+  KG
+  PACKETS
+}
+
+enum NotificationType {
+  NEW_LISTING_NEARBY
+  CLAIM_SUCCESS
+  CLAIM_CANCELLED
+  PICKUP_REMINDER
+  LISTING_EXPIRED
+  COLLECTION_SUCCESS
+  PROVIDER_CANCELLATION
+  NEW_CLAIM
+  RECIPIENT_ARRIVED
+  QUANTITY_RESTORED
+  SYSTEM
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+model User {
+  id                  String             @id @default(cuid())
+  name                String
+  email               String             @unique
+  phone               String
+  passwordHash        String
+  role                Role
+  organisationName    String
+  verificationStatus  VerificationStatus @default(PENDING)
+  latitude            Float?
+  longitude           Float?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  listings            FoodListing[]
+  claims              Claim[]
+  notifications       Notification[]
+  preference          RecipientPreference?
+  auditLogs           AuditLog[]
+
+  @@index([role])
+  @@index([verificationStatus])
+}
+
+model FoodListing {
+  id                String        @id @default(cuid())
+  providerId        String
+  foodName          String
+  description       String
+  category          FoodCategory  @default(COOKED_MEALS)
+  totalQuantity     Int
+  availableQuantity Int
+  unit              FoodUnit      @default(PORTIONS)
+
+  preparedAt        DateTime
+  availableFrom     DateTime
+  pickupDeadline    DateTime
+
+  pickupAddress     String
+  latitude          Float
+  longitude         Float
+
+  image             String?
+  allergenNotes     String?
+  packagingType     String?
+  notes             String?
+
+  status            ListingStatus @default(AVAILABLE)
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  provider          User          @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  claims            Claim[]
+
+  @@index([pickupDeadline])
+  @@index([status])
+  @@index([providerId])
+  @@index([latitude, longitude])
+  @@index([status, pickupDeadline])
+}
+
+model Claim {
+  id          String       @id @default(cuid())
+  listingId   String
+  recipientId String
+
+  quantity    Int
+
+  status      ClaimStatus  @default(RESERVED)
+  claimToken  String       @unique
+
+  claimedAt   DateTime     @default(now())
+  cancelledAt DateTime?
+  collectedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  listing     FoodListing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  recipient   User         @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([recipientId])
+  @@index([status])
+  @@index([listingId, status])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM)
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
+model RecipientPreference {
+  id              String  @id @default(cuid())
+  userId          String  @unique
+  maxDistanceKm   Float   @default(10)
+  minimumQuantity Int     @default(1)
+  maximumQuantity Int     @default(100)
+  availableFrom   String? // "HH:MM" daily availability window
+  availableUntil  String?
+
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([action])
+}
