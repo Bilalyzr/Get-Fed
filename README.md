@@ -1,4 +1,4 @@
-# Food Worth Saving 🍽️
+# Get Fed 🍽️
 
 **Real-Time Surplus Food Coordination & Recovery Platform**
 
@@ -22,7 +22,7 @@ College events and canteens regularly end up with usable surplus food while pote
 
 ## Solution
 
-Food Worth Saving manages the complete lifecycle:
+Get Fed manages the complete lifecycle:
 
 ```
 SURPLUS IDENTIFIED → LISTING CREATED → VALIDATED → PUBLISHED → MATCHED
@@ -108,7 +108,7 @@ npm install          # also runs `prisma generate` via postinstall
 docker run -d --name fws-postgres \
   -e POSTGRES_USER=fws \
   -e POSTGRES_PASSWORD=fws_dev_password \
-  -e POSTGRES_DB=foodworthsaving \
+  -e POSTGRES_DB=getfed \
   -p 5432:5432 postgres:16-alpine
 ```
 
@@ -198,7 +198,7 @@ The integration suite covers **all 10 critical PRD edge cases**: concurrent clai
 
 | Role | Email | Notes |
 |---|---|---|
-| ADMIN | `admin@foodworthsaving.dev` | Verify recipients from `/admin/recipients` |
+| ADMIN | `admin@getfed.dev` | Verify recipients from `/admin/recipients` |
 | PROVIDER | `events@college.edu` | Has the 60-meal Biryani listing |
 | PROVIDER | `canteen@college.edu` | Sandwich platters (partially reserved) |
 | PROVIDER | `mess@hostel.edu` | Bakery surplus |
@@ -311,7 +311,7 @@ All responses use `{ success, data }` / `{ success: false, code, message }` with
 ## Project Structure
 
 ```
-food-worth-saving/
+get-fed/
 ├── app/
 │   ├── api/                  # Route Handlers (auth, listings, claims, dashboards, admin, cron)
 │   ├── provider/             # dashboard, listings, claims, scanner, analytics

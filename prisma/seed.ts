@@ -25,21 +25,21 @@ const PLACES = {
 };
 
 async function main() {
-  console.log("Seeding Food Worth Saving development data…");
+  console.log("Seeding Get Fed development data…");
 
   const passwordHash = await bcrypt.hash(PASSWORD, 12);
 
   // ------------------------------------------------------------------ users
   const admin = await prisma.user.upsert({
-    where: { email: "admin@foodworthsaving.dev" },
+    where: { email: "admin@getfed.dev" },
     update: {},
     create: {
       name: "Platform Admin",
-      email: "admin@foodworthsaving.dev",
+      email: "admin@getfed.dev",
       phone: "+91 90000 00001",
       passwordHash,
       role: "ADMIN",
-      organisationName: "Food Worth Saving",
+      organisationName: "Get Fed",
       verificationStatus: "VERIFIED",
       ...PLACES.campus,
     },
@@ -359,7 +359,7 @@ async function main() {
 
   console.log("Seed complete.");
   console.log("Demo accounts (password for all: Password123!):");
-  console.log("  ADMIN     admin@foodworthsaving.dev");
+  console.log("  ADMIN     admin@getfed.dev");
   console.log("  PROVIDER  canteen@college.edu / events@college.edu / mess@hostel.edu");
   console.log("  RECIPIENT hope@kitchen.org (verified)");
   console.log("             contact@greenplate.org (verified)");

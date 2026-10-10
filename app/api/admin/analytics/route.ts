@@ -28,7 +28,7 @@ export const GET = withApi(async () => {
       createdAt: log.createdAt.toISOString(),
       actor: log.user
         ? { name: log.user.name, organisation: log.user.organisationName, role: log.user.role }
-        : { name: "System", organisation: "Food Worth Saving", role: "SYSTEM" },
+        : { name: "System", organisation: "Get Fed", role: "SYSTEM" },
     })),
   });
 });

@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// ReactBits-style animation kit, adapted for Food Worth Saving.
+// ReactBits-style animation kit, adapted for Get Fed.
 // Patterns inspired by reactbits.dev (open source, MIT) — reimplemented
 // with framer-motion + CSS in the app's sustainability palette.
 // ---------------------------------------------------------------------------

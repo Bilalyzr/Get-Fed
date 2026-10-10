@@ -234,7 +234,7 @@ async function main() {
   assert(afterCancel.json?.data?.listing?.status === "AVAILABLE", "Listing back to AVAILABLE");
 
   // Admin verification flow
-  const adminCookie = await login("admin@foodworthsaving.dev", "Password123!");
+  const adminCookie = await login("admin@getfed.dev", "Password123!");
   const pendingUsers = await api("/api/admin/users?status=PENDING", { cookies: adminCookie });
   const pendingUser = pendingUsers.json?.data?.find(
     (u) => u.role === "RECIPIENT" && u.email === "new@ngo.org"

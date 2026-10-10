@@ -132,7 +132,7 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md">
         <FadeContent>
           <div className="mb-8 flex flex-col items-center text-center">
-            <Link href="/" aria-label="Food Worth Saving home">
+            <Link href="/" aria-label="Get Fed home">
               <Logo size={56} />
             </Link>
             <h1 className="mt-5 text-2xl font-extrabold text-white">

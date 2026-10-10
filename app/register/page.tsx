@@ -100,13 +100,13 @@ export default function RegisterPage() {
       <div className="relative w-full max-w-md">
         <FadeContent>
           <div className="mb-6 flex flex-col items-center text-center">
-            <Link href="/" aria-label="Food Worth Saving home">
+            <Link href="/" aria-label="Get Fed home">
               <Logo size={52} />
             </Link>
             <h1 className="mt-5 text-2xl font-extrabold text-white">
               Join{" "}
               <GradientText colors={["#a3e635", "#4ade80", "#a3e635"]}>
-                Food Worth Saving
+                Get Fed
               </GradientText>
             </h1>
             <p className="mt-1 text-sm text-stone-400">

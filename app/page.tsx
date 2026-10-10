@@ -36,7 +36,7 @@ export default function LandingPage() {
       {/* ---------------------------------------------------------------- */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-stone-950/70 backdrop-blur-xl">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4">
-          <Link href="/" aria-label="Food Worth Saving home">
+          <Link href="/" aria-label="Get Fed home">
             <Logo size={38} withWordmark />
           </Link>
           <nav className="flex items-center gap-2 sm:gap-4" aria-label="Main">
@@ -96,7 +96,7 @@ export default function LandingPage() {
 
           <FadeContent delay={0.35}>
             <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-stone-400 sm:text-lg">
-              Food Worth Saving is a real-time allocation engine that connects
+              Get Fed is a real-time allocation engine that connects
               institutions holding usable surplus with verified recipients —
               matching quantity, preparation time, pickup deadline and location
               before the food spoils.
@@ -171,7 +171,7 @@ export default function LandingPage() {
                 A symposium planned for 300 attendees draws 240. At 2:00 PM the
                 organiser finds <strong className="text-lime-300">60 untouched meals</strong> —
                 usable for barely 90 minutes. Phone trees and WhatsApp groups burn the whole
-                window. Food Worth Saving publishes the listing, matches nearby verified
+                window. Get Fed publishes the listing, matches nearby verified
                 recipients, reserves exact quantities, and verifies handover with a QR
                 scan — with time to spare.
               </p>
@@ -291,7 +291,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="relative border-t border-white/5 bg-stone-950 py-8 text-center text-xs text-stone-500">
-        <p>Food Worth Saving — real-time surplus food coordination, verified end-to-end.</p>
+        <p>Get Fed — real-time surplus food coordination, verified end-to-end.</p>
       </footer>
     </div>
   );

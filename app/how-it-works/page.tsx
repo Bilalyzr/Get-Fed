@@ -38,7 +38,7 @@ export default function HowItWorksPage() {
       <DotGrid dotColor="rgba(74,222,128,0.12)" size={26} />
 
       <div className="relative mx-auto max-w-3xl px-4 py-12">
-        <Link href="/" aria-label="Food Worth Saving home" className="inline-block">
+        <Link href="/" aria-label="Get Fed home" className="inline-block">
           <Logo size={40} withWordmark />
         </Link>
 

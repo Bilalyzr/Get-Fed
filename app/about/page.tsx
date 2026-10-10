@@ -11,7 +11,7 @@ export default function AboutPage() {
       <DotGrid dotColor="rgba(74,222,128,0.12)" size={26} />
 
       <div className="relative mx-auto max-w-3xl px-4 py-12">
-        <Link href="/" aria-label="Food Worth Saving home" className="inline-block">
+        <Link href="/" aria-label="Get Fed home" className="inline-block">
           <Logo size={40} withWordmark />
         </Link>
         <FadeContent>
@@ -25,7 +25,7 @@ export default function AboutPage() {
         <FadeContent delay={0.15}>
           <div className="mt-6 space-y-5 leading-relaxed text-stone-300">
             <p>
-              Food Worth Saving is a{" "}
+              Get Fed is a{" "}
               <strong className="text-lime-300">
                 real-time allocation and coordination engine for time-sensitive
                 surplus food
@@ -45,7 +45,7 @@ export default function AboutPage() {
             </p>
             <h2 className="pt-2 text-xl font-bold text-white">What makes it different</h2>
             <p>
-              A donation-posting website lists food. Food Worth Saving{" "}
+              A donation-posting website lists food. Get Fed{" "}
               <strong className="text-lime-300">coordinates</strong> it: time,
               location, quantity, recipient eligibility, matching, partial
               allocation, cancellation recovery, expiry, verified pickup and

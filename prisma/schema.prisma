@@ -1,4 +1,4 @@
-// Food Worth Saving — Real-Time Surplus Food Coordination & Recovery Platform
+// Get Fed — Real-Time Surplus Food Coordination & Recovery Platform
 // Prisma schema (PostgreSQL)
 
 generator client {

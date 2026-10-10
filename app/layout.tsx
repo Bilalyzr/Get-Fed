@@ -4,8 +4,8 @@ import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: {
-    default: "Food Worth Saving",
-    template: "%s · Food Worth Saving",
+    default: "Get Fed",
+    template: "%s · Get Fed",
   },
   description:
     "Real-time surplus food coordination — connect time-sensitive surplus with verified recipients before the pickup window expires.",

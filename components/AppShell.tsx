@@ -85,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-6">
             <Link
               href={role ? homeByRole[role] : "/"}
-              aria-label="Food Worth Saving home"
+              aria-label="Get Fed home"
               className="transition-transform duration-200 hover:scale-[1.03]"
             >
               <Logo size={34} withWordmark />
@@ -190,7 +190,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer className="border-t border-stone-200 bg-white py-4 text-center text-xs text-stone-400">
-        Food Worth Saving — real-time surplus food coordination. Every meal counts.
+        Get Fed — real-time surplus food coordination. Every meal counts.
       </footer>
     </div>
   );

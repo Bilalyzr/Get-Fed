@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Food Worth Saving brand mark — a sprout rising from a bowl, drawn as a
+// Get Fed brand mark — a sprout rising from a bowl, drawn as a
 // crisp SVG with a green→lime gradient. Works at 16px favicon up to hero size.
 // ---------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ export function Logo({
       {withWordmark && (
         <span className="flex flex-col leading-none">
           <span className="text-sm font-extrabold tracking-tight text-stone-900 dark:text-white">
-            Food Worth Saving
+            Get Fed
           </span>
           <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-green-700/80">
             Real-time surplus coordination
