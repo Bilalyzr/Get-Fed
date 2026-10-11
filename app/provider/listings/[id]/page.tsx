@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Ban,
   MapPin,
   Clock3,
@@ -19,6 +18,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { MapViewDynamic } from "@/components/MapView";
 import { useToast } from "@/components/Toast";
+import { BackButton } from "@/components/BackButton";
 
 type ClaimRow = {
   id: string;
@@ -180,13 +180,7 @@ export default function ProviderListingDetailPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          href="/provider/listings"
-          className="flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-700"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          Listings
-        </Link>
+        <BackButton fallbackHref="/provider/listings" label="Back to listings" />
         <button onClick={load} className="btn-secondary !px-3" aria-label="Refresh">
           <RefreshCw className="h-4 w-4" aria-hidden />
         </button>

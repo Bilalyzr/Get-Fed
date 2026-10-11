@@ -39,10 +39,10 @@ type Analytics = {
 };
 
 const CATEGORY_COLORS = [
-  "#166534",
-  "#16a34a",
-  "#22c55e",
-  "#84cc16",
+  "#0d530e",
+  "#306d29",
+  "#4e8b45",
+  "#c5d9a8",
   "#eab308",
   "#f59e0b",
   "#78716c",
@@ -126,8 +126,8 @@ export default function ProviderAnalyticsPage() {
             <AreaChart data={data.mealsRecoveredTrend} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="recoveredGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="#306d29" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#306d29" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
@@ -140,7 +140,7 @@ export default function ProviderAnalyticsPage() {
               <Area
                 type="monotone"
                 dataKey="meals"
-                stroke="#16a34a"
+                stroke="#306d29"
                 strokeWidth={2}
                 fill="url(#recoveredGradient)"
               />

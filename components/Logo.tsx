@@ -7,10 +7,12 @@ export function Logo({
   size = 36,
   className = "",
   withWordmark = false,
+  wordmarkClassName = "text-sm font-bold tracking-tight text-ink font-display",
 }: {
   size?: number;
   className?: string;
   withWordmark?: boolean;
+  wordmarkClassName?: string;
 }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
@@ -24,17 +26,17 @@ export function Logo({
       >
         <defs>
           <linearGradient id="fws-logo-bg" x1="4" y1="2" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#052e16" />
-            <stop offset="0.5" stopColor="#166534" />
-            <stop offset="1" stopColor="#15803d" />
+            <stop stopColor="#0d530e" />
+            <stop offset="0.6" stopColor="#306d29" />
+            <stop offset="1" stopColor="#4e8b45" />
           </linearGradient>
           <linearGradient id="fws-logo-leaf" x1="16" y1="8" x2="34" y2="30" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#d9f99d" />
-            <stop offset="1" stopColor="#4ade80" />
+            <stop stopColor="#fbf5dd" />
+            <stop offset="1" stopColor="#e7e1b1" />
           </linearGradient>
           <linearGradient id="fws-logo-bowl" x1="10" y1="28" x2="38" y2="42" gradientUnits="userSpaceOnUse">
             <stop stopColor="#ffffff" />
-            <stop offset="1" stopColor="#bbf7d0" />
+            <stop offset="1" stopColor="#fbf5dd" />
           </linearGradient>
         </defs>
 
@@ -77,7 +79,7 @@ export function Logo({
         {/* Bowl steam/arc accent */}
         <path
           d="M13 27.5c1.6-1.6 4-1.6 5.6 0M29.4 27.5c1.6-1.6 4-1.6 5.6 0"
-          stroke="#bbf7d0"
+          stroke="#c5d9a8"
           strokeWidth="1.7"
           strokeLinecap="round"
           opacity="0.9"
@@ -86,12 +88,7 @@ export function Logo({
 
       {withWordmark && (
         <span className="flex flex-col leading-none">
-          <span className="text-sm font-extrabold tracking-tight text-stone-900 dark:text-white">
-            Get Fed
-          </span>
-          <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-green-700/80">
-            Real-time surplus coordination
-          </span>
+          <span className={wordmarkClassName}>Get Fed</span>
         </span>
       )}
     </span>

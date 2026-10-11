@@ -9,6 +9,7 @@ import {
   deriveListingStatus,
 } from "@/lib/state-machine";
 import { generateClaimToken, tokenMatches } from "@/services/qr.service";
+import { stopTrackingForClaim } from "@/services/tracking.service";
 import type { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
@@ -242,6 +243,9 @@ export async function cancelClaim(
         where: { id: claimId },
         data: { status: "CANCELLED", cancelledAt: now },
       });
+
+      // Live tracking ends immediately with the claim (spec §16).
+      await stopTrackingForClaim(claimId, "CANCELLED", recipientId, "claim_cancelled", tx);
 
       let listingAvailable = claim.listing.availableQuantity;
 
@@ -478,6 +482,9 @@ export async function confirmCollectionByQr(
         data: { status: "COLLECTED", collectedAt: now },
       });
 
+      // Collection verified → tracking completes and live location is cleared.
+      await stopTrackingForClaim(claim.id, "COMPLETED", scannerUserId, "collection_verified", tx);
+
       // If every reserved quantity is now collected, mark the listing COLLECTED.
       const outstanding = await tx.claim.count({
         where: {
@@ -562,6 +569,8 @@ export async function markNoShow(
       where: { id: claimId },
       data: { status: "NO_SHOW", cancelledAt: new Date() },
     });
+
+    await stopTrackingForClaim(claimId, "STOPPED", providerId, "recipient_no_show", tx);
 
     let released = 0;
     const listing = await tx.foodListing.findUnique({

@@ -153,7 +153,7 @@ export function ClaimModal({
           <button type="button" onClick={onClose} disabled={submitting} className="btn-secondary flex-1">
             Cancel
           </button>
-          <ClickSpark sparkColor="#bbf7d0" className="flex-1">
+          <ClickSpark sparkColor="#c5d9a8" className="flex-1">
             <button
               type="button"
               onClick={submit}

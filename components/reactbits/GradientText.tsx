@@ -5,7 +5,7 @@
 export function GradientText({
   children,
   className = "",
-  colors = ["#16a34a", "#84cc16", "#0ea5e9", "#16a34a"],
+  colors = ["#306d29", "#4e8b45", "#c5d9a8", "#306d29"],
   animationSpeed = 6,
 }: {
   children: React.ReactNode;

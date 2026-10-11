@@ -8,6 +8,7 @@ import { QRGenerator } from "@/components/QRGenerator";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
+import { BackButton } from "@/components/BackButton";
 
 type QrData = {
   claimId: string;
@@ -93,6 +94,9 @@ function QrPageInner() {
 
   return (
     <div className="mx-auto max-w-md space-y-5">
+      <div className="flex justify-start">
+        <BackButton fallbackHref="/recipient/claims" label="Back to my claims" />
+      </div>
       <div className="text-center">
         <span className="inline-flex rounded-2xl bg-green-700 p-3 text-white" aria-hidden>
           <QrCode className="h-6 w-6" />

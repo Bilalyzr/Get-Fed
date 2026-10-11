@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { RefreshCw, ScanLine, UserX, ChevronRight } from "lucide-react";
+import { RefreshCw, ScanLine, UserX, ChevronRight, Navigation } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { useToast } from "@/components/Toast";
@@ -120,15 +120,25 @@ export default function ProviderClaimsPage() {
               <div className="flex items-center gap-2">
                 <StatusBadge status={claim.status} />
                 {["RESERVED", "PICKUP_IN_PROGRESS"].includes(claim.status) && (
-                  <button
-                    onClick={() => markNoShow(claim.id)}
-                    disabled={busy}
-                    className="btn-secondary !px-3 !py-1.5 text-xs"
-                    title="Mark as no-show"
-                  >
-                    <UserX className="h-3.5 w-3.5" aria-hidden />
-                    No-show
-                  </button>
+                  <>
+                    <Link
+                      href={`/provider/tracking/${claim.id}`}
+                      className="btn-secondary !px-3 !py-1.5 text-xs"
+                      title="Live pickup journey"
+                    >
+                      <Navigation className="h-3.5 w-3.5" aria-hidden />
+                      Track
+                    </Link>
+                    <button
+                      onClick={() => markNoShow(claim.id)}
+                      disabled={busy}
+                      className="btn-secondary !px-3 !py-1.5 text-xs"
+                      title="Mark as no-show"
+                    >
+                      <UserX className="h-3.5 w-3.5" aria-hidden />
+                      No-show
+                    </button>
+                  </>
                 )}
                 <Link
                   href={`/provider/listings/${(claim as { listingId?: string }).listingId ?? ""}`}

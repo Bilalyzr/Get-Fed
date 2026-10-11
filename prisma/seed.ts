@@ -137,7 +137,7 @@ async function main() {
 
   const pendingRecipient = await prisma.user.upsert({
     where: { email: "new@ngo.org" },
-    update: {},
+    update: { verificationStatus: "PENDING" },
     create: {
       name: "Sam Verma",
       email: "new@ngo.org",

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ScanLine } from "lucide-react";
 import { QRScanner } from "@/components/QRScanner";
 import { useToast } from "@/components/Toast";
+import { BackButton } from "@/components/BackButton";
 
 export default function ScannerPage() {
   const { toast } = useToast();
@@ -16,6 +17,9 @@ export default function ScannerPage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
+      <div className="flex justify-start">
+        <BackButton fallbackHref="/provider/dashboard" label="Back to dashboard" />
+      </div>
       <div className="text-center">
         <span className="inline-flex rounded-2xl bg-green-700 p-3 text-white" aria-hidden>
           <ScanLine className="h-6 w-6" />

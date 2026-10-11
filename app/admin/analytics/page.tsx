@@ -31,11 +31,11 @@ type Analytics = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  AVAILABLE: "#16a34a",
-  PARTIALLY_RESERVED: "#0284c7",
+  AVAILABLE: "#306d29",
+  PARTIALLY_RESERVED: "#4e8b45",
   FULLY_RESERVED: "#d97706",
   PICKUP_IN_PROGRESS: "#6366f1",
-  COLLECTED: "#059669",
+  COLLECTED: "#0d530e",
   EXPIRED: "#78716c",
   CANCELLED: "#e11d48",
   DRAFT: "#a8a29e",
@@ -119,8 +119,8 @@ export default function AdminAnalyticsPage() {
             <AreaChart data={data.mealsRecoveredTrend} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
               <defs>
                 <linearGradient id="adminRecovered" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="#306d29" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#306d29" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
@@ -130,7 +130,7 @@ export default function AdminAnalyticsPage() {
                 contentStyle={{ borderRadius: 12, border: "1px solid #e7e5e4", fontSize: 12 }}
                 formatter={(value: number) => [`${value} meals`, "Recovered"]}
               />
-              <Area type="monotone" dataKey="meals" stroke="#16a34a" strokeWidth={2} fill="url(#adminRecovered)" />
+              <Area type="monotone" dataKey="meals" stroke="#306d29" strokeWidth={2} fill="url(#adminRecovered)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>

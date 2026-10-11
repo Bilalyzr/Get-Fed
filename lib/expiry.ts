@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { audit, AUDIT_ACTIONS } from "@/lib/audit";
 import { createNotifications } from "@/lib/notifications";
+import { stopTrackingForClaim } from "@/services/tracking.service";
 
 // ---------------------------------------------------------------------------
 // Expiry engine (PRD §17/§25/§26).
@@ -51,6 +52,9 @@ export async function expireOverdueListings(
           where: { id: { in: activeClaims.map((c) => c.id) } },
           data: { status: "EXPIRED", cancelledAt: now },
         });
+        for (const claim of activeClaims) {
+          await stopTrackingForClaim(claim.id, "STOPPED", null, "listing_expired", tx);
+        }
       }
 
       await audit(

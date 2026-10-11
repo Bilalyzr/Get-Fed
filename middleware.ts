@@ -12,6 +12,18 @@ export default withAuth(
     const role = token?.role as string | undefined;
     const path = req.nextUrl.pathname;
 
+    const home =
+      role === "PROVIDER"
+        ? "/provider/dashboard"
+        : role === "ADMIN"
+        ? "/admin"
+        : "/recipient/dashboard";
+
+    // If authenticated and visiting login or register, redirect to dashboard
+    if (token && (path === "/login" || path === "/register")) {
+      return NextResponse.redirect(new URL(home, req.url));
+    }
+
     if (!role) return NextResponse.next();
 
     const mismatch =
@@ -20,23 +32,30 @@ export default withAuth(
       (path.startsWith("/admin") && role !== "ADMIN");
 
     if (mismatch) {
-      const home =
-        role === "PROVIDER"
-          ? "/provider/dashboard"
-          : role === "RECIPIENT"
-          ? "/recipient/dashboard"
-          : "/admin";
       return NextResponse.redirect(new URL(home, req.url));
     }
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token, req }) => {
+        const path = req.nextUrl.pathname;
+        if (path === "/login" || path === "/register") {
+          return true;
+        }
+        return !!token;
+      },
     },
   }
 );
 
 export const config = {
-  matcher: ["/provider/:path*", "/recipient/:path*", "/admin/:path*"],
+  matcher: [
+    "/provider/:path*",
+    "/recipient/:path*",
+    "/admin/:path*",
+    "/profile/:path*",
+    "/login",
+    "/register",
+  ],
 };

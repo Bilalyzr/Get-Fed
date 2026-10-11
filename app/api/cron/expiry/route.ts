@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { expireOverdueListings, sendPickupReminders } from "@/lib/expiry";
+import { cleanupTrackingSessions } from "@/services/tracking.service";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -24,13 +25,18 @@ export async function GET(req: Request): Promise<NextResponse> {
   }
 
   try {
-    const [expiry, reminders] = await Promise.all([
+    const [expiry, reminders, trackingCleanup] = await Promise.all([
       expireOverdueListings(),
       sendPickupReminders(),
+      cleanupTrackingSessions(),
     ]);
     return NextResponse.json({
       success: true,
-      data: { expiredListings: expiry.processed, remindersSent: reminders.sent },
+      data: {
+        expiredListings: expiry.processed,
+        remindersSent: reminders.sent,
+        trackingSessionsStopped: trackingCleanup.stopped,
+      },
     });
   } catch (error) {
     console.error("[cron] expiry run failed:", error);

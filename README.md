@@ -334,3 +334,26 @@ get-fed/
 ---
 
 Built for hackathon judging — every screen connects to real logic, every workflow to the database, every critical rule to server-side enforcement.
+
+---
+
+## Live Pickup Tracking (Zomato-style journeys)
+
+Recipients can share their live location during an active pickup; the authorised provider follows the journey on a map with road-route ETA, and both sides get arrival / delay / stale-location alerts. Collection still requires the existing QR verification — arrival alone never completes a claim.
+
+### How it works
+1. Recipient opens **My Claims → Live track** and explicitly presses **Start sharing** (consent-first; permission-denied still allows navigation + QR).
+2. `watchPosition` fixes are throttled to ~5 s and POSTed to `POST /api/claims/:id/tracking/location` (validated: ranges, accuracy, clock-skew, rate limits, payload size).
+3. Server persists **only the latest fix** (no GPS history) and calls an OSRM-compatible routing service (`ROUTING_PROVIDER_URL`) for road distance/duration/geometry — failures degrade to an explicit "routing unavailable" state, never fake road numbers.
+4. Arrival = 2 consecutive fixes within 100 m with ≤ 50 m accuracy (hysteresis prevents GPS-drift flapping); provider + recipient get one deduplicated alert.
+5. Delay alert fires once when ETA + 10-min buffer exceeds the pickup deadline; a 30 s silent gap marks the location stale for both dashboards.
+6. Tracking auto-stops on cancellation, expiry, no-show or QR-verified collection — live coordinates are cleared immediately (retention policy). The cron job also reaps silent sessions.
+
+### Endpoints
+`POST /api/claims/:id/tracking/start` · `POST .../tracking/location` · `GET .../tracking` (recipient or listing provider only) · `POST .../tracking/stop`
+
+### Configuration (see `.env.example`)
+`ROUTING_PROVIDER_URL`, `TRACKING_ARRIVAL_RADIUS_M`, `TRACKING_MAX_ACCURACY_M`, `TRACKING_STALE_SECONDS`, `TRACKING_PICKUP_BUFFER_MIN`, `TRACKING_AUTO_STOP_STALE_MIN`
+
+### Privacy
+Only the claim's recipient and the listing's provider can ever read a position, only while the claim is eligible and sharing is active. Coordinates never appear in URLs or logs, and are deleted when sharing stops.

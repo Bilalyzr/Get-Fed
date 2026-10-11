@@ -6,7 +6,7 @@
 export function StarBorder({
   children,
   className = "",
-  color = "#16a34a",
+  color = "#4e8b45",
   speed = "6s",
   thickness = 1.5,
 }: {

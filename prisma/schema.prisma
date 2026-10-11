@@ -75,7 +75,20 @@ enum NotificationType {
   NEW_CLAIM
   RECIPIENT_ARRIVED
   QUANTITY_RESTORED
+  TRACKING_STARTED
+  TRACKING_ARRIVED
+  TRACKING_DELAYED
+  TRACKING_STALE
+  TRACKING_STOPPED
   SYSTEM
+}
+
+enum TrackingStatus {
+  ACTIVE
+  ARRIVED
+  STOPPED
+  COMPLETED
+  CANCELLED
 }
 
 // ---------------------------------------------------------------------------
@@ -162,6 +175,7 @@ model Claim {
 
   listing     FoodListing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
   recipient   User         @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  trackingSession PickupTrackingSession?
 
   @@index([listingId])
   @@index([recipientId])
@@ -182,6 +196,50 @@ model Notification {
 
   @@index([userId, read])
   @@index([userId, createdAt])
+}
+
+// Live pickup tracking session — one per claim. Persists only the LATEST
+// location (no GPS history); coordinates are cleared when tracking stops
+// (retention policy: immediate). Claim status stays authoritative on Claim.
+model PickupTrackingSession {
+  id            String         @id @default(cuid())
+  claimId       String         @unique
+  status        TrackingStatus @default(ACTIVE)
+
+  startedAt     DateTime       @default(now())
+  stoppedAt     DateTime?
+
+  // Latest accepted fix (nullable — null when not actively sharing)
+  lastLatitude  Float?
+  lastLongitude Float?
+  accuracyMeters Float?
+  headingDegrees Float?
+  speedMps      Float?
+  lastLocationAt DateTime?
+  clientTimestamp DateTime?
+
+  // Latest road-route calculation
+  routeAvailable       Boolean @default(false)
+  routeDistanceMeters  Float?
+  routeDurationSeconds Float?
+  routeGeometry        Json? // GeoJSON LineString coordinates [[lng,lat],...]
+
+  // Arrival detection state (2 consecutive qualifying fixes + hysteresis)
+  consecutiveArrivalFixes Int      @default(0)
+  arrivalDetectedAt       DateTime?
+  arrivalAlertSentAt      DateTime?
+
+  // Deduplicated alert stamps
+  delayAlertSentAt DateTime?
+  staleAlertSentAt DateTime?
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  claim         Claim          @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([status, lastLocationAt])
 }
 
 model RecipientPreference {

@@ -3,7 +3,7 @@
 // Live HTTP verification of the PRD §54 demo scenario + key edge cases.
 // Run with the server up:  node scripts/verify-demo.mjs
 // ---------------------------------------------------------------------------
-const BASE = process.env.BASE_URL ?? "http://localhost:3100";
+const BASE = process.env.BASE_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:7777";
 
 async function api(path, { method = "GET", body, token, cookies, headers = {} } = {}) {
   const res = await fetch(`${BASE}${path}`, {

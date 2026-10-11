@@ -1,18 +1,33 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { signIn, getSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { signIn, getSession, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LogIn, AlertTriangle, Loader2 } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validators";
 import { Logo } from "@/components/Logo";
+import { BackButton } from "@/components/BackButton";
+import { sanitizeCallbackUrl } from "@/lib/routing";
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      // Never trust a stale callbackUrl across roles (e.g. admin landing in
+      // the provider portal) and never honor absolute/external URLs.
+      router.replace(sanitizeCallbackUrl(session.user.role, rawCallbackUrl));
+    }
+  }, [status, session, router, rawCallbackUrl]);
+
   const {
     register,
     handleSubmit,
@@ -22,7 +37,14 @@ function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/login/redirect";
+  if (status === "authenticated") {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 gap-3">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p className="text-sm font-medium text-zen-muted">Already signed in. Taking you to your dashboard…</p>
+      </div>
+    );
+  }
 
   async function onSubmit(data: LoginInput) {
     setAuthError(null);
@@ -51,14 +73,7 @@ function LoginForm() {
 
       // Check current session for role-based redirect
       const session = await getSession();
-      const role = session?.user?.role;
-
-      let destination = callbackUrl;
-      if (!destination || destination === "/login/redirect") {
-        if (role === "PROVIDER") destination = "/provider/dashboard";
-        else if (role === "ADMIN") destination = "/admin";
-        else destination = "/recipient/dashboard";
-      }
+      const destination = sanitizeCallbackUrl(session?.user?.role, rawCallbackUrl);
 
       window.location.href = destination;
     } catch {
@@ -71,50 +86,50 @@ function LoginForm() {
       {authError && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-lg bg-rose-500/10 p-3 text-sm text-rose-300 ring-1 ring-rose-500/30"
+          className="flex items-start gap-2 rounded-lg bg-rose-50 p-3 text-sm text-rose-700 ring-1 ring-rose-200"
         >
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-600" aria-hidden />
           <span>{authError}</span>
         </p>
       )}
 
       <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-stone-300">
+        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-zen-text">
           Email
         </label>
         <input
           id="email"
           type="email"
           autoComplete="email"
-          className="block w-full rounded-lg border-0 bg-stone-900/90 px-3.5 py-2.5 text-sm text-white ring-1 ring-inset ring-white/15 placeholder:text-stone-500 focus:bg-stone-900 focus:ring-2 focus:ring-inset focus:ring-emerald-400"
+          className="block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
           placeholder="you@organisation.org"
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
           {...register("email")}
         />
         {errors.email && (
-          <p id="email-error" className="mt-1 text-xs text-rose-400" role="alert">
+          <p id="email-error" className="mt-1 text-xs text-rose-600" role="alert">
             {errors.email.message}
           </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-stone-300">
+        <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-zen-text">
           Password
         </label>
         <input
           id="password"
           type="password"
           autoComplete="current-password"
-          className="block w-full rounded-lg border-0 bg-stone-900/90 px-3.5 py-2.5 text-sm text-white ring-1 ring-inset ring-white/15 placeholder:text-stone-500 focus:bg-stone-900 focus:ring-2 focus:ring-inset focus:ring-emerald-400"
+          className="block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
           placeholder="••••••••"
           aria-invalid={!!errors.password}
           aria-describedby={errors.password ? "password-error" : undefined}
           {...register("password")}
         />
         {errors.password && (
-          <p id="password-error" className="mt-1 text-xs text-rose-400" role="alert">
+          <p id="password-error" className="mt-1 text-xs text-rose-600" role="alert">
             {errors.password.message}
           </p>
         )}
@@ -123,7 +138,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-bold text-stone-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60 shadow-sm"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 shadow-subtle active:scale-[0.98]"
       >
         {isSubmitting ? (
           <>
@@ -138,11 +153,11 @@ function LoginForm() {
         )}
       </button>
 
-      <p className="text-center text-sm text-stone-400">
+      <p className="text-center text-sm text-zen-muted">
         New here?{" "}
         <Link
           href="/register"
-          className="font-semibold text-emerald-400 hover:text-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
+          className="font-semibold text-primary hover:text-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
         >
           Create an account
         </Link>
@@ -153,22 +168,28 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative flex min-h-dvh items-center justify-center bg-stone-950 px-4 py-10">
+    <div className="relative flex min-h-dvh items-center justify-center bg-page px-4 py-10 font-sans antialiased text-zen-text selection:bg-primary-faint selection:text-ink">
       <div className="relative w-full max-w-md">
+        <div className="mb-6 flex justify-start">
+          <BackButton fallbackHref="/" label="Back to home" />
+        </div>
         <div className="mb-8 flex flex-col items-center text-center">
-          <Link href="/" aria-label="Get Fed home">
-            <Logo size={56} />
+          <Link href="/" aria-label="Get Fed home" className="transition-transform duration-200 hover:scale-[1.02]">
+            <Logo size={52} />
           </Link>
-          <h1 className="mt-5 text-2xl font-extrabold text-white">
+          <div className="mt-4 text-xs font-semibold uppercase tracking-widest text-primary">
+            Sign In
+          </div>
+          <h1 className="mt-1 text-2xl font-serif font-bold text-ink sm:text-3xl">
             Welcome back
           </h1>
-          <p className="mt-1.5 text-sm text-stone-400">
-            Sign in to coordinate surplus food in real time.
+          <p className="mt-1.5 text-sm text-zen-muted">
+            Coordinate surplus food in real time with verified integrity.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900/70 p-6 shadow-xl sm:p-7">
-          <Suspense fallback={<div className="skeleton h-80 !bg-stone-800" aria-label="Loading sign in form" />}>
+        <div className="rounded-2xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle">
+          <Suspense fallback={<div className="skeleton h-80" aria-label="Loading sign in form" />}>
             <LoginForm />
           </Suspense>
         </div>

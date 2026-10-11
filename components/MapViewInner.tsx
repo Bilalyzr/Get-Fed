@@ -63,7 +63,7 @@ export function MapViewInner({
           <Circle
             center={[center.latitude, center.longitude]}
             radius={radiusKm * 1000}
-            pathOptions={{ color: "#16a34a", fillColor: "#16a34a", fillOpacity: 0.06, weight: 1.5 }}
+            pathOptions={{ color: "#306d29", fillColor: "#306d29", fillOpacity: 0.08, weight: 1.5 }}
           />
         )}
         {markers.map((m: MapMarker) => (

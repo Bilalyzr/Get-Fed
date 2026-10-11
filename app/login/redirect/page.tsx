@@ -41,10 +41,10 @@ export default function LoginRedirectPage() {
   }, [session, status]);
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-stone-950 text-stone-200">
+    <div className="flex min-h-dvh items-center justify-center bg-page text-zen-text">
       <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
-        <p className="text-sm font-medium text-stone-400">Directing to your dashboard…</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <p className="text-sm font-medium text-zen-muted">Directing to your dashboard…</p>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ type Spark = { x: number; y: number; id: number };
 
 export function ClickSpark({
   children,
-  sparkColor = "#4ade80",
+  sparkColor = "#4e8b45",
   sparkCount = 8,
   className = "",
 }: {

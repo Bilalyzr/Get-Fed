@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 7777",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
@@ -18,7 +18,9 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
     "verify:demo": "node scripts/verify-demo.mjs",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "start:7777": "next start -p 7777",
+    "start:3777": "next start -p 3777"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

@@ -183,13 +183,20 @@ export default function RecipientClaimsPage() {
                         <QrCode className="h-3.5 w-3.5" aria-hidden />
                         Show QR
                       </Link>
+                      <Link
+                        href={`/recipient/tracking/${claim.id}`}
+                        className="btn-secondary !px-3 !py-1.5 text-xs"
+                      >
+                        <Truck className="h-3.5 w-3.5" aria-hidden />
+                        Live track
+                      </Link>
                       {claim.status === "RESERVED" && (
                         <button
                           onClick={() => startPickup(claim)}
                           disabled={busy === claim.id}
                           className="btn-secondary !px-3 !py-1.5 text-xs"
                         >
-                          <Truck className="h-3.5 w-3.5" aria-hidden />
+                          <Navigation className="h-3.5 w-3.5" aria-hidden />
                           I&apos;m on the way
                         </button>
                       )}

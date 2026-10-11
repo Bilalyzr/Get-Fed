@@ -16,7 +16,7 @@ type Particle = {
 export function Particles({
   className = "",
   density = 0.00008,
-  color = "#86efac",
+  color = "#c5d9a8",
   interactive = true,
 }: {
   className?: string;

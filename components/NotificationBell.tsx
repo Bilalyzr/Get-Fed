@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Bell, CheckCheck } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -17,30 +18,66 @@ type NotificationItem = {
   createdAt: string;
 };
 
+// Module-level deduplication cache across multiple mounted bells (mobile + desktop)
+let cachedData: { notifications: NotificationItem[]; unreadCount: number } | null = null;
+let lastFetchTime = 0;
+let inflightFetch: Promise<{ notifications: NotificationItem[]; unreadCount: number } | null> | null = null;
+
+async function fetchNotificationsShared(): Promise<{ notifications: NotificationItem[]; unreadCount: number } | null> {
+  const now = Date.now();
+  if (cachedData && now - lastFetchTime < 10_000) {
+    return cachedData;
+  }
+  if (inflightFetch) return inflightFetch;
+
+  inflightFetch = (async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      if (!res.ok) return null;
+      const json = await res.json();
+      if (json.success) {
+        cachedData = {
+          notifications: json.data.notifications,
+          unreadCount: json.data.unreadCount,
+        };
+        lastFetchTime = Date.now();
+        return cachedData;
+      }
+    } catch {
+      // silent
+    } finally {
+      inflightFetch = null;
+    }
+    return null;
+  })();
+
+  return inflightFetch;
+}
+
 export function NotificationBell() {
+  const { status } = useSession();
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<NotificationItem[]>([]);
-  const [unread, setUnread] = useState(0);
+  const [items, setItems] = useState<NotificationItem[]>(cachedData?.notifications ?? []);
+  const [unread, setUnread] = useState(cachedData?.unreadCount ?? 0);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
-    try {
-      const res = await fetch("/api/notifications");
-      const json = await res.json();
-      if (json.success) {
-        setItems(json.data.notifications);
-        setUnread(json.data.unreadCount);
-      }
-    } catch {
-      // silent — polling will retry
+    if (status !== "authenticated") return;
+    if (typeof document !== "undefined" && document.hidden) return;
+
+    const data = await fetchNotificationsShared();
+    if (data) {
+      setItems(data.notifications);
+      setUnread(data.unreadCount);
     }
-  }, []);
+  }, [status]);
 
   useEffect(() => {
+    if (status !== "authenticated") return;
     load();
-    const interval = setInterval(load, 20_000);
+    const interval = setInterval(load, 30_000);
     return () => clearInterval(interval);
-  }, [load]);
+  }, [load, status]);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {

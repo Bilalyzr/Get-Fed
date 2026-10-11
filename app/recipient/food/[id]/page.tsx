@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
-  ArrowLeft,
   Clock3,
   MapPin,
   Utensils,
@@ -16,6 +15,7 @@ import {
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { ClaimModal } from "@/components/ClaimModal";
+import { BackButton } from "@/components/BackButton";
 import { MapViewDynamic } from "@/components/MapView";
 
 type Detail = {
@@ -96,13 +96,7 @@ export default function FoodDetailPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <Link
-        href="/recipient/food"
-        className="flex items-center gap-1.5 text-sm font-medium text-stone-500 hover:text-stone-700"
-      >
-        <ArrowLeft className="h-4 w-4" aria-hidden />
-        Discover food
-      </Link>
+      <BackButton fallbackHref="/recipient/food" label="Back to discovery" />
 
       <div className="card p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">

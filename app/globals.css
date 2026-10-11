@@ -2,15 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Melloida (chosen display font) — drop-in slot. The demo TTF lives in
+   public/fonts/ when present; until then headings fall back to Bodoni Moda. */
+@font-face {
+  font-family: "Melloida";
+  src:
+    local("Melloida"),
+    url("/fonts/MelloidaDemo.ttf") format("truetype"),
+    url("/fonts/MelloidaDemo.otf") format("opentype");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Color Hunt palette: fbf5dd / e7e1b1 / 306d29 / 0d530e */
+  --color-page: #fbf5dd;
+  --color-surface: #ffffff;
+  --color-surface-soft: #e7e1b1;
+  --color-warm: #e7e1b1;
+  --color-border: #e7e1b1;
+  --color-border-strong: #cfc68f;
+  --color-ink: #0d530e;
+  --color-text: #1f3a1d;
+  --color-text-muted: #5c6e52;
+  --color-text-faint: #93986f;
+  --color-primary: #306d29;
+  --color-primary-hover: #0d530e;
+  --color-primary-soft: #4e8b45;
+  --color-primary-faint: #c5d9a8;
+  --color-primary-wash: #e7e1b1;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-display-stack: "Melloida", "Bodoni Moda", Georgia, serif;
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    background-color: var(--color-page);
+    color: var(--color-text);
   }
   body {
-    @apply bg-stone-50 text-stone-900;
+    background-color: var(--color-page);
+    color: var(--color-text);
+    font-family: var(--font-body);
   }
   ::selection {
-    @apply bg-green-200;
+    background-color: var(--color-primary-faint);
+    color: var(--color-ink);
+  }
+  h1, h2, .font-display {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }
 
@@ -20,46 +62,46 @@
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
   .badge-available {
-    @apply bg-green-100 text-green-800 ring-1 ring-green-600/20;
+    @apply bg-primary-faint text-primary-hover ring-1 ring-primary-soft;
   }
   .badge-partially_reserved {
-    @apply bg-sky-100 text-sky-800 ring-1 ring-sky-600/20;
+    @apply bg-sky-50 text-sky-800 ring-1 ring-sky-300;
   }
   .badge-fully_reserved {
-    @apply bg-amber-100 text-amber-800 ring-1 ring-amber-600/20;
+    @apply bg-amber-50 text-amber-800 ring-1 ring-amber-300;
   }
   .badge-pickup_in_progress {
-    @apply bg-indigo-100 text-indigo-800 ring-1 ring-indigo-600/20;
+    @apply bg-indigo-50 text-indigo-800 ring-1 ring-indigo-300;
   }
   .badge-collected {
-    @apply bg-emerald-100 text-emerald-800 ring-1 ring-emerald-600/20;
+    @apply bg-primary-wash text-primary ring-1 ring-primary-soft;
   }
   .badge-expired {
-    @apply bg-stone-200 text-stone-700 ring-1 ring-stone-500/20;
+    @apply bg-stone-100 text-stone-600 ring-1 ring-stone-300;
   }
   .badge-cancelled {
-    @apply bg-rose-100 text-rose-800 ring-1 ring-rose-600/20;
+    @apply bg-rose-50 text-rose-800 ring-1 ring-rose-200;
   }
   .badge-no_show {
-    @apply bg-rose-100 text-rose-800 ring-1 ring-rose-600/20;
+    @apply bg-rose-50 text-rose-800 ring-1 ring-rose-200;
   }
   .badge-reserved {
-    @apply bg-sky-100 text-sky-800 ring-1 ring-sky-600/20;
+    @apply bg-sky-50 text-sky-800 ring-1 ring-sky-300;
   }
   .badge-requested {
-    @apply bg-stone-100 text-stone-700 ring-1 ring-stone-400/30;
+    @apply bg-stone-100 text-stone-700 ring-1 ring-stone-300;
   }
   .badge-pending {
-    @apply bg-amber-100 text-amber-800 ring-1 ring-amber-600/20;
+    @apply bg-amber-50 text-amber-800 ring-1 ring-amber-300;
   }
   .badge-verified {
-    @apply bg-green-100 text-green-800 ring-1 ring-green-600/20;
+    @apply bg-primary-faint text-primary-hover ring-1 ring-primary-soft;
   }
   .badge-rejected {
-    @apply bg-rose-100 text-rose-800 ring-1 ring-rose-600/20;
+    @apply bg-rose-50 text-rose-800 ring-1 ring-rose-200;
   }
   .badge-suspended {
-    @apply bg-rose-100 text-rose-800 ring-1 ring-rose-600/20;
+    @apply bg-rose-50 text-rose-800 ring-1 ring-rose-200;
   }
 
   .btn {
@@ -68,39 +110,39 @@
       disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-green-700 text-white hover:bg-green-800 focus-visible:outline-green-700
-      active:scale-[0.98] shadow-sm;
+    @apply btn bg-primary text-white hover:bg-primary-hover focus-visible:outline-primary
+      active:scale-[0.98] shadow-subtle;
   }
   .btn-secondary {
-    @apply btn bg-white text-stone-700 ring-1 ring-stone-300 hover:bg-stone-50
-      focus-visible:outline-stone-400 active:scale-[0.98];
+    @apply btn bg-white text-zen-text ring-1 ring-zen-border hover:bg-surface-soft
+      focus-visible:outline-zen-muted active:scale-[0.98];
   }
   .btn-danger {
     @apply btn bg-rose-600 text-white hover:bg-rose-700 focus-visible:outline-rose-600
-      active:scale-[0.98] shadow-sm;
+      active:scale-[0.98] shadow-subtle;
   }
   .btn-ghost {
-    @apply btn text-stone-600 hover:bg-stone-100 focus-visible:outline-stone-400;
+    @apply btn text-zen-muted hover:text-ink hover:bg-surface-soft focus-visible:outline-zen-border;
   }
 
   .card {
-    @apply rounded-2xl bg-white ring-1 ring-stone-200/80 shadow-sm;
+    @apply rounded-2xl bg-white ring-1 ring-zen-border shadow-subtle;
   }
 
   .input {
-    @apply block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-stone-900
-      ring-1 ring-inset ring-stone-300 placeholder:text-stone-400
-      focus:ring-2 focus:ring-inset focus:ring-green-600;
+    @apply block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-zen-text
+      ring-1 ring-inset ring-zen-border placeholder:text-zen-faint
+      focus:ring-2 focus:ring-inset focus:ring-primary;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-stone-700;
+    @apply mb-1.5 block text-sm font-medium text-zen-text;
   }
   .field-error {
     @apply mt-1 text-xs text-rose-600;
   }
 
   .skeleton {
-    @apply animate-pulse rounded-lg bg-stone-200;
+    @apply animate-pulse rounded-lg bg-surface-soft;
   }
 }
 
@@ -119,9 +161,9 @@
   .fws-shiny-text {
     background: linear-gradient(
       110deg,
-      rgba(255, 255, 255, 0.55) 35%,
-      #ffffff 50%,
-      rgba(255, 255, 255, 0.55) 65%
+      #0d530e 30%,
+      #4e8b45 50%,
+      #0d530e 70%
     );
     background-size: 280% 100%;
     -webkit-background-clip: text;
@@ -154,7 +196,7 @@
   }
   .fws-star-border-content {
     @apply relative z-10 rounded-[10.5px];
-    background: #14532d;
+    background: #306d29;
     width: 100%;
     height: 100%;
   }
@@ -172,36 +214,36 @@
   .fws-aurora {
     position: absolute;
     border-radius: 9999px;
-    filter: blur(64px);
-    opacity: 0.5;
+    filter: blur(72px);
+    opacity: 0.35;
     will-change: transform, opacity;
   }
   .fws-aurora-a {
     width: 55vw; height: 42vh;
     top: -10%; left: -8%;
-    background: radial-gradient(closest-side, rgba(22, 163, 74, 0.55), transparent 70%);
+    background: radial-gradient(closest-side, rgba(48, 109, 41, 0.22), transparent 70%);
     animation: fws-aurora-drift-a 14s ease-in-out infinite alternate;
   }
   .fws-aurora-b {
     width: 45vw; height: 38vh;
     top: 8%; right: -10%;
-    background: radial-gradient(closest-side, rgba(132, 204, 22, 0.4), transparent 70%);
+    background: radial-gradient(closest-side, rgba(78, 139, 69, 0.28), transparent 70%);
     animation: fws-aurora-drift-b 17s ease-in-out infinite alternate;
   }
   .fws-aurora-c {
     width: 40vw; height: 30vh;
     bottom: -14%; left: 28%;
-    background: radial-gradient(closest-side, rgba(14, 165, 233, 0.28), transparent 70%);
+    background: radial-gradient(closest-side, rgba(231, 225, 177, 0.9), transparent 70%);
     animation: fws-aurora-drift-c 20s ease-in-out infinite alternate;
   }
   @keyframes fws-aurora-drift-a {
-    to { transform: translate(9vw, 7vh) scale(1.15); opacity: 0.7; }
+    to { transform: translate(9vw, 7vh) scale(1.15); opacity: 0.45; }
   }
   @keyframes fws-aurora-drift-b {
-    to { transform: translate(-8vw, 9vh) scale(0.9); opacity: 0.65; }
+    to { transform: translate(-8vw, 9vh) scale(0.9); opacity: 0.4; }
   }
   @keyframes fws-aurora-drift-c {
-    to { transform: translate(6vw, -6vh) scale(1.1); opacity: 0.6; }
+    to { transform: translate(6vw, -6vh) scale(1.1); opacity: 0.35; }
   }
 
   /* ---- TiltedCard ---- */
@@ -218,7 +260,7 @@
     pointer-events: none;
     background: radial-gradient(
       420px circle at var(--fws-tilt-x, 50%) var(--fws-tilt-y, 50%),
-      rgba(255, 255, 255, 0.14),
+      rgba(48, 109, 41, 0.09),
       transparent 45%
     );
     opacity: 0;
@@ -235,7 +277,7 @@
     pointer-events: none;
     background: radial-gradient(
       340px circle at var(--fws-spot-x, 50%) var(--fws-spot-y, 50%),
-      var(--fws-spot-color, rgba(22, 163, 74, 0.14)),
+      var(--fws-spot-color, rgba(48, 109, 41, 0.09)),
       transparent 65%
     );
     opacity: var(--fws-spot-opacity, 0);
@@ -244,14 +286,17 @@
 
   /* ---- Glass surface ---- */
   .glass {
-    background: rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(18px) saturate(1.5);
     -webkit-backdrop-filter: blur(18px) saturate(1.5);
+    border: 1px solid var(--color-border);
   }
   .glass-dark {
-    background: rgba(5, 46, 22, 0.55);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(18px) saturate(1.4);
     -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(36, 36, 36, 0.05);
   }
 
   /* ---- Feature card sheen on hover ---- */

@@ -9,6 +9,7 @@ import {
 } from "@/lib/state-machine";
 import type { CreateListingInput, UpdateListingInput } from "@/lib/validators";
 import type { FoodListing, Prisma } from "@prisma/client";
+import { stopTrackingForClaim } from "@/services/tracking.service";
 
 // ---------------------------------------------------------------------------
 // Listing engine (PRD §9–§11, §14–§16).
@@ -223,6 +224,9 @@ export async function cancelListing(
         where: { id: { in: activeClaims.map((c) => c.id) } },
         data: { status: "CANCELLED", cancelledAt: new Date() },
       });
+      for (const claim of activeClaims) {
+        await stopTrackingForClaim(claim.id, "CANCELLED", providerId, "listing_cancelled", tx);
+      }
     }
 
     await audit(
