@@ -423,5 +423,10 @@ describe("tracking lifecycle integration", () => {
 // Restore the real fetch after the suite.
 afterAll(async () => {
   global.fetch = realFetch;
+  // Cascade-deletes this run's listings/claims/tracking sessions — leaks
+  // otherwise pile up in the demo discovery feed (see integration suite).
+  await prisma.user.deleteMany({
+    where: { id: { in: [providerId, recipientId, otherRecipientId, otherProviderId] } },
+  });
   await prisma.$disconnect();
 });

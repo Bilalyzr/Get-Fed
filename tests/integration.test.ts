@@ -74,6 +74,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+  // Cascade-deletes this run's listings/claims/sessions — without this every
+  // run leaks ~25 co-located test listings into the demo discovery feed and
+  // eventually pushes real listings off the first results page.
+  await prisma.user.deleteMany({
+    where: { id: { in: [providerId, verifiedRecipientId, otherVerifiedRecipientId, pendingRecipientId] } },
+  });
   await prisma.$disconnect();
 });
 
