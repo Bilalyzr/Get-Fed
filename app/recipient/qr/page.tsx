@@ -3,12 +3,11 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { QrCode, MapPin, Clock3, Utensils, Loader2, Truck, PackageCheck } from "lucide-react";
+import { QrCode, MapPin, Clock3, Utensils, Loader2, Truck, PackageCheck, ArrowLeft, ShieldCheck } from "lucide-react";
 import { QRGenerator } from "@/components/QRGenerator";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
-import { BackButton } from "@/components/BackButton";
 
 type QrData = {
   claimId: string;
@@ -43,7 +42,6 @@ function QrPageInner() {
       const json = await res.json();
       if (json.success) {
         setClaims(json.data);
-        // Auto-select the first active claim if none preselected.
         if (!preselect && json.data.length > 0) {
           setSelected(json.data[0].id);
         }
@@ -93,40 +91,56 @@ function QrPageInner() {
   const activeClaims = (claims ?? []).filter((c) => !c.listing.expired);
 
   return (
-    <div className="mx-auto max-w-md space-y-5">
-      <div className="flex justify-start">
-        <BackButton fallbackHref="/recipient/claims" label="Back to my claims" />
+    <div className="mx-auto max-w-lg space-y-6">
+      {/* Back button */}
+      <div>
+        <Link
+          href="/recipient/claims"
+          className="inline-flex items-center gap-1.5 text-xs font-mono text-zen-muted hover:text-ink transition-colors"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          <span>Back to My Claims</span>
+        </Link>
       </div>
-      <div className="text-center">
-        <span className="inline-flex rounded-2xl bg-green-700 p-3 text-white" aria-hidden>
-          <QrCode className="h-6 w-6" />
-        </span>
-        <h1 className="mt-3 text-2xl font-extrabold text-stone-900">Your pickup QR</h1>
-        <p className="mt-1 text-sm text-stone-500">
-          Show this code to the provider at pickup. It works offline and is
-          verified securely server-side.
+
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white shadow-soft">
+          <QrCode className="h-7 w-7" />
+        </div>
+        <h1 className="text-3xl font-serif font-bold text-ink">
+          Pickup Access Pass
+        </h1>
+        <p className="text-xs text-zen-muted font-mono max-w-sm mx-auto">
+          Present this dynamic cryptographic pass to kitchen staff at collection. Single-use handshake token.
         </p>
       </div>
 
       {claims === null ? (
-        <div className="skeleton h-64" />
+        <div className="skeleton h-64 rounded-2xl" />
       ) : activeClaims.length === 0 ? (
-        <div className="card p-8 text-center text-sm text-stone-500">
-          No active claims to show.{" "}
-          <Link href="/recipient/food" className="font-semibold text-green-700">
-            Discover food
+        <div className="rounded-3xl border border-zen-border bg-white p-12 text-center shadow-subtle">
+          <p className="text-sm font-serif font-bold text-ink">No Active Claims</p>
+          <p className="mt-1 text-xs text-zen-muted">
+            You don&apos;t have any active pickup passes right now.
+          </p>
+          <Link
+            href="/recipient/food"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-subtle hover:bg-primary-hover transition-colors"
+          >
+            <span>Discover Food Nearby</span>
           </Link>
         </div>
       ) : (
         <>
           {activeClaims.length > 1 && (
-            <div className="card p-3">
-              <label htmlFor="claim-select" className="label !mb-1">
-                Select claim
+            <div className="rounded-2xl border border-zen-border bg-white p-3.5 shadow-subtle">
+              <label htmlFor="claim-select" className="block text-xs font-serif font-bold text-ink mb-1.5">
+                Switch Active Pass
               </label>
               <select
                 id="claim-select"
-                className="input"
+                className="w-full rounded-xl border border-zen-border bg-page/40 px-3 py-2 text-xs font-mono text-zen-text focus:border-primary focus:outline-none"
                 value={selected ?? ""}
                 onChange={(e) => setSelected(e.target.value)}
               >
@@ -140,58 +154,71 @@ function QrPageInner() {
           )}
 
           {loadingQr ? (
-            <div className="card flex h-72 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-stone-300" aria-hidden />
+            <div className="flex h-72 items-center justify-center rounded-3xl border border-zen-border bg-white shadow-subtle">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden />
             </div>
           ) : error ? (
-            <div className="card p-6 text-center text-sm text-rose-600" role="alert">
+            <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-xs font-mono text-rose-700">
               {error}
             </div>
           ) : qr ? (
-            <div className="card space-y-4 p-6 text-center">
-              <QRGenerator
-                signedPayload={qr.signedPayload}
-                caption="Screenshot-proof: this code refreshes securely per claim."
-              />
+            <div className="rounded-3xl border border-zen-border bg-white p-6 shadow-soft space-y-5 text-center">
+              <div className="flex items-center justify-between border-b border-zen-border pb-3 text-xs font-mono">
+                <span className="flex items-center gap-1.5 text-primary font-bold">
+                  <ShieldCheck className="h-4 w-4" />
+                  <span>Authenticated Token</span>
+                </span>
+                <span className="text-zen-muted">Claim #{qr.claimId.slice(-6)}</span>
+              </div>
 
-              <div className="space-y-2 rounded-xl bg-stone-50 p-4 text-left text-sm">
-                <p className="flex items-center gap-2 font-bold text-stone-900">
-                  <Utensils className="h-4 w-4 text-green-700" aria-hidden />
-                  {qr.foodName} — {qr.quantity}
+              <div className="p-2">
+                <QRGenerator
+                  signedPayload={qr.signedPayload}
+                  caption="Cryptographic handshake envelope · Refreshes upon each collection cycle"
+                />
+              </div>
+
+              {/* Meal Summary Box */}
+              <div className="rounded-2xl border border-zen-border bg-page/40 p-4 text-left space-y-2 text-xs font-mono">
+                <p className="flex items-center justify-between font-serif font-bold text-ink text-sm">
+                  <span>{qr.foodName}</span>
+                  <span className="font-mono text-xs font-normal text-primary">
+                    {qr.quantity} portions
+                  </span>
                 </p>
-                <p className="flex items-center gap-2 text-stone-600">
-                  <MapPin className="h-4 w-4 shrink-0 text-stone-400" aria-hidden />
-                  {qr.pickupAddress}
+                <p className="flex items-center gap-1.5 text-zen-muted">
+                  <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span className="truncate">{qr.pickupAddress}</span>
                 </p>
-                <p className="flex items-center gap-2 text-stone-600">
-                  <Clock3 className="h-4 w-4 shrink-0 text-stone-400" aria-hidden />
+                <div className="flex items-center justify-between pt-1">
                   <CountdownTimer deadline={qr.pickupDeadline} />
-                </p>
-                <div className="pt-1">
                   <StatusBadge status={qr.status} />
                 </div>
               </div>
 
               {qr.status === "RESERVED" && (
-                <button onClick={startPickup} className="btn-secondary w-full">
-                  <Truck className="h-4 w-4" aria-hidden />
-                  I&apos;m on the way — notify provider
+                <button
+                  onClick={startPickup}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-semibold text-white shadow-subtle hover:bg-primary-hover active:scale-95 transition-all"
+                >
+                  <Truck className="h-4 w-4" />
+                  <span>I&apos;m on the way — Notify Provider</span>
                 </button>
               )}
+
               {qr.status === "PICKUP_IN_PROGRESS" && (
-                <p className="flex items-center justify-center gap-2 text-sm text-indigo-700">
-                  <PackageCheck className="h-4 w-4" aria-hidden />
-                  Provider notified — heading to pickup.
-                </p>
+                <div className="flex items-center justify-center gap-2 rounded-xl bg-primary-faint/60 py-2.5 text-xs font-mono font-semibold text-primary">
+                  <PackageCheck className="h-4 w-4" />
+                  <span>Kitchen notified · Proceed to service dock</span>
+                </div>
               )}
             </div>
           ) : null}
         </>
       )}
 
-      <p className="text-center text-xs text-stone-400">
-        Each QR contains a unique cryptographic token bound to your claim. A
-        second scan attempt is always rejected.
+      <p className="text-center text-xs font-mono text-zen-muted">
+        Zero-trust verification: This QR carries a signed payload bound to your verified organisation.
       </p>
     </div>
   );
@@ -202,7 +229,7 @@ export default function RecipientQrPage() {
     <Suspense
       fallback={
         <div className="flex min-h-[50vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-stone-300" aria-hidden />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden />
         </div>
       }
     >

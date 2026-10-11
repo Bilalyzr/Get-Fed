@@ -1,7 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw, HeartHandshake, ShieldCheck, Ban, Undo2 } from "lucide-react";
+import Link from "next/link";
+import {
+  RefreshCw,
+  HeartHandshake,
+  ShieldCheck,
+  Ban,
+  Undo2,
+  ArrowLeft,
+  Building2,
+  CheckCircle2,
+} from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
 
@@ -19,16 +29,23 @@ export default function AdminRecipientsPage() {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserRow[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      const res = await fetch("/api/admin/users?role=RECIPIENT");
-      const json = await res.json();
-      if (json.success) setUsers(json.data);
-    } catch {
-      toast("error", "Could not load recipients.");
-    }
-  }, [toast]);
+  const load = useCallback(
+    async (showSpinner = false) => {
+      if (showSpinner) setRefreshing(true);
+      try {
+        const res = await fetch("/api/admin/users?role=RECIPIENT");
+        const json = await res.json();
+        if (json.success) setUsers(json.data);
+      } catch {
+        toast("error", "Could not load recipients.");
+      } finally {
+        setRefreshing(false);
+      }
+    },
+    [toast]
+  );
 
   useEffect(() => {
     load();
@@ -55,82 +72,118 @@ export default function AdminRecipientsPage() {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-6">
+      {/* Top Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zen-border pb-5">
         <div>
-          <h1 className="text-2xl font-extrabold text-stone-900">Recipients</h1>
-          <p className="text-sm text-stone-500">
-            Only VERIFIED recipients can claim food (PRD rule).
+          <div className="flex items-center gap-2 mb-1">
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1 text-xs font-mono text-zen-muted hover:text-ink transition-colors"
+            >
+              <ArrowLeft className="h-3 w-3" />
+              <span>Back to Command Center</span>
+            </Link>
+          </div>
+          <h1 className="text-3xl font-serif font-bold text-ink">
+            Recipient Verifications
+          </h1>
+          <p className="mt-1 text-sm text-zen-muted">
+            Under protocol safety rules, only verified recipient organisations are permitted to reserve and claim surplus food batches.
           </p>
         </div>
-        <button onClick={load} className="btn-secondary" aria-label="Refresh">
-          <RefreshCw className="h-4 w-4" aria-hidden />
+
+        <button
+          onClick={() => load(true)}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-zen-border bg-white px-3.5 py-2 text-xs font-semibold text-zen-text shadow-subtle hover:bg-surface-soft active:scale-95 transition-all"
+          disabled={refreshing}
+          aria-label="Refresh recipients"
+        >
+          <RefreshCw
+            className={`h-3.5 w-3.5 text-zen-muted ${refreshing ? "animate-spin text-primary" : ""}`}
+          />
+          <span>Refresh</span>
         </button>
       </div>
 
       {!users ? (
         <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="skeleton h-16" />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="skeleton h-20 rounded-2xl" />
           ))}
         </div>
+      ) : users.length === 0 ? (
+        <div className="rounded-3xl border border-zen-border bg-white p-12 text-center shadow-subtle">
+          <HeartHandshake className="mx-auto h-12 w-12 text-zen-muted/60" />
+          <h3 className="mt-4 font-serif text-lg font-bold text-ink">No Recipients Registered</h3>
+          <p className="mt-1 text-xs text-zen-muted">
+            No pantry or shelter organisations have registered in this campus cluster yet.
+          </p>
+        </div>
       ) : (
-        <ul className="card divide-y divide-stone-100" role="list">
+        <div className="overflow-hidden rounded-2xl border border-zen-border bg-white shadow-subtle divide-y divide-zen-border">
           {users.map((user) => (
-            <li key={user.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
-              <div className="flex items-center gap-3">
-                <span className="rounded-xl bg-green-100 p-2 text-green-700" aria-hidden>
-                  <HeartHandshake className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-stone-900">{user.organisationName}</p>
+            <div
+              key={user.id}
+              className="flex flex-wrap items-center justify-between gap-4 p-5 hover:bg-page/40 transition-colors"
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-faint text-ink border border-zen-border">
+                  <Building2 className="h-5 w-5 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    <p className="font-serif font-bold text-ink text-base truncate">
+                      {user.organisationName}
+                    </p>
                     <StatusBadge status={user.verificationStatus} />
                   </div>
-                  <p className="text-xs text-stone-500">
-                    {user.name} · {user._count?.claims ?? 0} claim
-                    {(user._count?.claims ?? 0) === 1 ? "" : "s"} · joined{" "}
+                  <p className="mt-0.5 text-xs text-zen-muted font-mono">
+                    <span className="text-ink font-medium">{user.name}</span> ({user.email}) ·{" "}
+                    <span className="font-semibold text-primary">{user._count?.claims ?? 0}</span> claims · joined{" "}
                     {new Date(user.createdAt).toLocaleDateString("en-US", {
                       month: "short",
+                      day: "numeric",
                       year: "numeric",
                     })}
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
+
+              <div className="flex items-center gap-2">
                 {user.verificationStatus !== "VERIFIED" && (
                   <button
                     onClick={() => setVerification(user.id, "VERIFIED", user.organisationName)}
                     disabled={busy === user.id}
-                    className="btn-primary !px-3 !py-1.5 text-xs"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-white shadow-subtle hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50"
                   >
-                    <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-                    Verify
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span>Approve & Verify</span>
                   </button>
                 )}
                 {user.verificationStatus !== "SUSPENDED" ? (
                   <button
                     onClick={() => setVerification(user.id, "SUSPENDED", user.organisationName)}
                     disabled={busy === user.id}
-                    className="btn-danger !px-3 !py-1.5 text-xs"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100 active:scale-95 transition-all disabled:opacity-50"
                   >
-                    <Ban className="h-3.5 w-3.5" aria-hidden />
-                    Suspend
+                    <Ban className="h-3.5 w-3.5" />
+                    <span>Suspend</span>
                   </button>
                 ) : (
                   <button
                     onClick={() => setVerification(user.id, "VERIFIED", user.organisationName)}
                     disabled={busy === user.id}
-                    className="btn-secondary !px-3 !py-1.5 text-xs"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-zen-border bg-white px-3.5 py-2 text-xs font-semibold text-ink shadow-subtle hover:bg-surface-soft active:scale-95 transition-all disabled:opacity-50"
                   >
-                    <Undo2 className="h-3.5 w-3.5" aria-hidden />
-                    Reinstate
+                    <Undo2 className="h-3.5 w-3.5" />
+                    <span>Reinstate</span>
                   </button>
                 )}
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

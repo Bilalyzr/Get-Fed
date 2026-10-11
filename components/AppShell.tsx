@@ -98,9 +98,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   async function handleSignOut() {
-    await signOut({ redirect: false });
-    router.push("/login");
-    router.refresh();
+    await signOut({ callbackUrl: "/login" });
   }
 
   // ---------------------------------------------------------------------
@@ -210,10 +208,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <button
+            id="sidebar-signout-btn"
             onClick={handleSignOut}
             title={collapsedMode ? "Sign out" : undefined}
             aria-label={collapsedMode ? "Sign out" : undefined}
-            className={`flex items-center rounded-lg border border-page/25 bg-white/5 px-3 py-2 text-xs font-semibold text-page/85 transition-colors hover:bg-page hover:text-primary-hover ${
+            className={`mt-3 flex items-center rounded-lg border border-page/25 bg-white/5 px-3 py-2 text-xs font-semibold text-page/85 transition-colors hover:bg-page hover:text-primary-hover ${
               collapsedMode ? "w-full justify-center" : "w-full justify-center gap-2"
             }`}
           >
@@ -302,35 +301,47 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* ---------------------------------------------------------------- */}
         {/* Desktop Top Utility Header (notifications, status)               */}
         {/* ---------------------------------------------------------------- */}
-        <div className="hidden h-14 items-center justify-between border-b border-zen-border bg-white/60 px-6 backdrop-blur-sm md:flex">
-          <div className="flex items-center gap-2">
+        <div className="hidden h-14 items-center justify-between border-b border-zen-border bg-white/70 px-8 backdrop-blur-md md:flex">
+          <div className="flex items-center gap-3">
             <span className="text-xs font-semibold uppercase tracking-wider text-zen-muted">
               {role ? (portalTitle[role] ?? role) : "Get Fed"}
             </span>
+            <span className="text-zen-border font-light">/</span>
+            <span className="text-xs font-serif font-bold text-ink">
+              {items.find((i) => pathname === i.href || (i.href !== homeByRole[role ?? ""] && pathname.startsWith(i.href)))?.label ?? "Terminal"}
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-2 rounded-full border border-zen-border bg-page/70 px-3 py-1 text-[11px] font-mono text-ink">
+              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+              <span>Campus Grid · Active</span>
+            </div>
+
             {role === "RECIPIENT" && session?.user?.verificationStatus !== "VERIFIED" && (
-              <span className="badge badge-pending inline-flex text-xs">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-0.5 text-[11px] font-semibold text-amber-800 shadow-subtle">
+                <ShieldCheck className="h-3.5 w-3.5 text-amber-600" aria-hidden />
                 Pending Verification
               </span>
             )}
-            <NotificationBell />
+
+            <div className="flex items-center gap-2 pl-2 border-l border-zen-border">
+              <NotificationBell />
+            </div>
           </div>
         </div>
 
         {/* ---------------------------------------------------------------- */}
         {/* Main Content Area                                                */}
         {/* ---------------------------------------------------------------- */}
-        <main className="flex-1 px-4 py-6 sm:px-6 md:py-8 max-w-6xl w-full mx-auto">
+        <main className="flex-1 px-4 py-6 sm:px-8 md:py-8 max-w-7xl w-full mx-auto">
           {role === "RECIPIENT" && session?.user?.verificationStatus !== "VERIFIED" && (
-            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-sm text-amber-900 shadow-subtle">
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-900 shadow-subtle">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" aria-hidden />
               <div>
-                <strong className="font-semibold">Organisation Pending Verification</strong>
+                <strong className="font-serif font-bold">Organisation Pending Verification</strong>
                 <p className="mt-0.5 text-xs text-amber-800">
-                  Your recipient profile is being reviewed by an administrator. You can explore available food nearby, but claims will be enabled as soon as your account is verified.
+                  Your recipient profile is currently under review by campus administration. You can inspect surplus items in real time, and claim actions will unlock immediately upon verification.
                 </p>
               </div>
             </div>
@@ -338,8 +349,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </main>
 
-        <footer className="border-t border-zen-border bg-page py-6 text-center text-xs text-zen-muted">
-          Get Fed — real-time surplus food coordination. Every meal counts.
+        <footer className="border-t border-zen-border bg-page/80 py-6 text-center text-xs font-mono text-zen-muted">
+          Get Fed Platform · Deterministic Zero-Waste Campus Logistics · Every portion recovered.
         </footer>
       </div>
     </div>

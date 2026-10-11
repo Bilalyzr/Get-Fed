@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { ShieldCheck, Crosshair, SlidersHorizontal, Loader2 } from "lucide-react";
+import {
+  ShieldCheck,
+  Crosshair,
+  SlidersHorizontal,
+  Loader2,
+  Building2,
+  MapPin,
+  Clock,
+  Sparkles,
+  CheckCircle2,
+} from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
 import { recipientPreferenceSchema } from "@/lib/validators";
@@ -28,6 +38,14 @@ export default function RecipientProfilePage() {
   const [saving, setSaving] = useState(false);
   const [locating, setLocating] = useState(false);
 
+  const [prefs, setPrefs] = useState({
+    maxDistanceKm: 10,
+    minimumQuantity: 1,
+    maximumQuantity: 100,
+    availableFrom: "",
+    availableUntil: "",
+  });
+
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/recipient/profile");
@@ -51,31 +69,25 @@ export default function RecipientProfilePage() {
     })();
   }, []);
 
-  const [prefs, setPrefs] = useState({
-    maxDistanceKm: 10,
-    minimumQuantity: 1,
-    maximumQuantity: 100,
-    availableFrom: "",
-    availableUntil: "",
-  });
-
   function locate() {
     if (!("geolocation" in navigator)) {
-      toast("error", "Geolocation not supported.");
+      toast("error", "Geolocation not supported by this browser.");
       return;
     }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setCoords({
+        const next = {
           latitude: Number(pos.coords.latitude.toFixed(6)),
           longitude: Number(pos.coords.longitude.toFixed(6)),
-        });
+        };
+        setCoords(next);
         setLocating(false);
+        toast("success", `GPS location anchored (${next.latitude}, ${next.longitude}).`);
       },
       () => {
         setLocating(false);
-        toast("error", "Could not get location.");
+        toast("error", "Could not capture device location.");
       },
       { enableHighAccuracy: true, timeout: 10_000 }
     );
@@ -89,7 +101,6 @@ export default function RecipientProfilePage() {
         payload.latitude = coords.latitude;
         payload.longitude = coords.longitude;
       }
-      // Validate preferences client-side first (server re-validates).
       recipientPreferenceSchema.parse(prefs);
 
       const res = await fetch("/api/recipient/profile", {
@@ -99,7 +110,7 @@ export default function RecipientProfilePage() {
       });
       const json = await res.json();
       if (json.success) {
-        toast("success", "Profile updated.");
+        toast("success", "Preferences saved to matching engine.");
         await updateSession({ verificationStatus: profile?.verificationStatus });
       } else {
         toast("error", json.message ?? "Update failed.");
@@ -112,86 +123,132 @@ export default function RecipientProfilePage() {
   }
 
   if (!profile) {
-    return <div className="skeleton h-96" />;
+    return (
+      <div className="mx-auto max-w-3xl space-y-6">
+        <div className="skeleton h-12 w-64 rounded-2xl" />
+        <div className="skeleton h-56 rounded-3xl" />
+        <div className="skeleton h-64 rounded-3xl" />
+      </div>
+    );
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
-      <div>
-        <h1 className="text-2xl font-extrabold text-stone-900">Profile & preferences</h1>
-        <p className="text-sm text-stone-500">
-          Your organisation details and matching preferences.
+    <div className="mx-auto max-w-3xl space-y-8">
+      {/* Top Header */}
+      <div className="border-b border-zen-border pb-5">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-primary">
+            Recipient Preferences Engine
+          </span>
+        </div>
+        <h1 className="text-3xl font-serif font-bold text-ink">
+          Organisation Profile & Preferences
+        </h1>
+        <p className="mt-1 text-sm text-zen-muted font-sans">
+          Configure your campus pantry geofence coordinates, automated surplus matching criteria, and daily intake capacity.
         </p>
       </div>
 
-      {/* Verification card */}
-      <div className="card flex items-start gap-4 p-5">
-        <span className="rounded-xl bg-stone-100 p-2.5 text-stone-600" aria-hidden>
-          <ShieldCheck className="h-5 w-5" />
-        </span>
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="font-bold text-stone-900">{profile.organisationName}</p>
-            <StatusBadge status={profile.verificationStatus} />
+      {/* Verification & Organisation Card */}
+      <div className="rounded-3xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle space-y-5">
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-faint text-primary border border-zen-border">
+            <Building2 className="h-6 w-6" />
           </div>
-          <p className="mt-1 text-sm text-stone-500">
-            {profile.verificationStatus === "VERIFIED"
-              ? "Verified — you can discover and claim surplus food."
-              : "Pending administrator verification. You can browse, but not claim."}
-          </p>
-          <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="text-stone-400">Contact</dt>
-              <dd className="text-stone-700">{profile.name}</dd>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h2 className="text-xl font-serif font-bold text-ink">{profile.organisationName}</h2>
+              <StatusBadge status={profile.verificationStatus} />
             </div>
-            <div>
-              <dt className="text-stone-400">Member since</dt>
-              <dd className="text-stone-700">
-                {new Date(profile.createdAt).toLocaleDateString("en-US", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </dd>
-            </div>
-          </dl>
+            <p className="mt-1 text-xs text-zen-muted font-mono">
+              {profile.verificationStatus === "VERIFIED"
+                ? "Verified Organisation — Full claiming authorization active."
+                : "Awaiting administrative review. Discovery enabled; claiming will unlock upon approval."}
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Location */}
-      <div className="card p-5">
-        <h2 className="font-bold text-stone-900">Base location</h2>
-        <p className="mt-1 text-sm text-stone-500">
-          Used for distance matching. Exact location is only used for matching
-          — providers never see your private details.
-        </p>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button onClick={locate} className="btn-secondary" disabled={locating}>
-            {locating ? (
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-            ) : (
-              <Crosshair className="h-4 w-4" aria-hidden />
-            )}
-            Update from device
-          </button>
-          {coords && (
-            <span className="text-sm text-green-700">
-              {coords.latitude}, {coords.longitude}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Matching preferences (PRD §36) */}
-      <div className="card p-5">
-        <h2 className="flex items-center gap-2 font-bold text-stone-900">
-          <SlidersHorizontal className="h-4 w-4 text-stone-400" aria-hidden />
-          Matching preferences
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <dl className="grid gap-4 text-xs font-mono sm:grid-cols-2 pt-4 border-t border-zen-border">
           <div>
-            <label htmlFor="p-distance" className="label">
-              Max distance: {prefs.maxDistanceKm} km
-            </label>
+            <dt className="text-zen-muted text-[11px]">Primary Contact</dt>
+            <dd className="font-semibold text-ink text-sm mt-0.5">{profile.name}</dd>
+          </div>
+          <div>
+            <dt className="text-zen-muted text-[11px]">Contact Email</dt>
+            <dd className="font-semibold text-ink text-sm mt-0.5 truncate">{profile.email}</dd>
+          </div>
+          <div>
+            <dt className="text-zen-muted text-[11px]">Phone</dt>
+            <dd className="font-semibold text-ink text-sm mt-0.5">{profile.phone || "Not set"}</dd>
+          </div>
+          <div>
+            <dt className="text-zen-muted text-[11px]">Registered Since</dt>
+            <dd className="font-semibold text-ink text-sm mt-0.5">
+              {new Date(profile.createdAt).toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+              })}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      {/* Geofence Base Location Card */}
+      <div className="rounded-3xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle space-y-4">
+        <div className="border-b border-zen-border pb-3">
+          <h2 className="flex items-center gap-2 font-serif text-lg font-bold text-ink">
+            <MapPin className="h-4 w-4 text-primary" />
+            <span>Geofence Base Location</span>
+          </h2>
+          <p className="mt-1 text-xs text-zen-muted font-sans">
+            Used by the atomic routing engine to calculate proximity and notify you when surplus is available within your radius.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-1">
+          <div>
+            <span className="text-[11px] font-mono text-zen-muted block">Anchored Coordinates:</span>
+            <p className="font-mono text-sm font-bold text-ink mt-0.5">
+              {coords ? `${coords.latitude.toFixed(5)}, ${coords.longitude.toFixed(5)}` : "Default Campus Grid"}
+            </p>
+          </div>
+
+          <button
+            onClick={locate}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-zen-border bg-white px-4 py-2 text-xs font-semibold text-zen-text shadow-subtle hover:bg-surface-soft active:scale-95 transition-all"
+            disabled={locating}
+          >
+            {locating ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" aria-hidden />
+            ) : (
+              <Crosshair className="h-3.5 w-3.5 text-primary" aria-hidden />
+            )}
+            <span>Update from Device GPS</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Matching Preferences Form Card */}
+      <div className="rounded-3xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle space-y-6">
+        <div className="border-b border-zen-border pb-3">
+          <h2 className="flex items-center gap-2 font-serif text-lg font-bold text-ink">
+            <SlidersHorizontal className="h-4 w-4 text-primary" aria-hidden />
+            <span>Surplus Intake Capacity & Match Criteria</span>
+          </h2>
+          <p className="mt-1 text-xs text-zen-muted font-sans">
+            Fine-tune minimum and maximum portions your community can distribute per rescue batch.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="p-distance" className="block text-xs font-serif font-bold text-ink">
+                Max Dispatch Radius: <span className="font-mono text-primary font-bold">{prefs.maxDistanceKm} km</span>
+              </label>
+              <span className="text-[11px] font-mono text-zen-muted">Transit boundary</span>
+            </div>
             <input
               id="p-distance"
               type="range"
@@ -199,69 +256,83 @@ export default function RecipientProfilePage() {
               max={50}
               value={prefs.maxDistanceKm}
               onChange={(e) => setPrefs((p) => ({ ...p, maxDistanceKm: Number(e.target.value) }))}
-              className="w-full accent-green-700"
+              className="w-full accent-primary"
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor="p-min" className="label">
-                Min quantity
-              </label>
-              <input
-                id="p-min"
-                type="number"
-                min={1}
-                className="input"
-                value={prefs.minimumQuantity}
-                onChange={(e) =>
-                  setPrefs((p) => ({ ...p, minimumQuantity: Number(e.target.value) || 1 }))
-                }
-              />
-            </div>
-            <div>
-              <label htmlFor="p-max" className="label">
-                Max quantity
-              </label>
-              <input
-                id="p-max"
-                type="number"
-                min={1}
-                className="input"
-                value={prefs.maximumQuantity}
-                onChange={(e) =>
-                  setPrefs((p) => ({ ...p, maximumQuantity: Number(e.target.value) || 1 }))
-                }
-              />
-            </div>
-          </div>
+
           <div>
-            <label htmlFor="p-from" className="label">
-              Available from (daily)
+            <label htmlFor="p-min" className="block text-xs font-serif font-bold text-ink mb-1.5">
+              Minimum Quantity (Portions)
+            </label>
+            <input
+              id="p-min"
+              type="number"
+              min={1}
+              className="w-full rounded-xl border border-zen-border bg-page/30 px-3.5 py-2.5 text-xs font-mono text-zen-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+              value={prefs.minimumQuantity}
+              onChange={(e) =>
+                setPrefs((p) => ({ ...p, minimumQuantity: Number(e.target.value) || 1 }))
+              }
+            />
+          </div>
+
+          <div>
+            <label htmlFor="p-max" className="block text-xs font-serif font-bold text-ink mb-1.5">
+              Maximum Intake Capacity (Portions)
+            </label>
+            <input
+              id="p-max"
+              type="number"
+              min={1}
+              className="w-full rounded-xl border border-zen-border bg-page/30 px-3.5 py-2.5 text-xs font-mono text-zen-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all"
+              value={prefs.maximumQuantity}
+              onChange={(e) =>
+                setPrefs((p) => ({ ...p, maximumQuantity: Number(e.target.value) || 1 }))
+              }
+            />
+          </div>
+
+          <div>
+            <label htmlFor="p-from" className="block text-xs font-serif font-bold text-ink mb-1.5">
+              Daily Distribution Hours (From)
             </label>
             <input
               id="p-from"
               type="time"
-              className="input"
+              className="w-full rounded-xl border border-zen-border bg-page/30 px-3.5 py-2.5 text-xs font-mono text-zen-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all"
               value={prefs.availableFrom}
               onChange={(e) => setPrefs((p) => ({ ...p, availableFrom: e.target.value }))}
             />
           </div>
+
           <div>
-            <label htmlFor="p-until" className="label">
-              Available until (daily)
+            <label htmlFor="p-until" className="block text-xs font-serif font-bold text-ink mb-1.5">
+              Daily Distribution Hours (Until)
             </label>
             <input
               id="p-until"
               type="time"
-              className="input"
+              className="w-full rounded-xl border border-zen-border bg-page/30 px-3.5 py-2.5 text-xs font-mono text-zen-text focus:border-primary focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary transition-all"
               value={prefs.availableUntil}
               onChange={(e) => setPrefs((p) => ({ ...p, availableUntil: e.target.value }))}
             />
           </div>
         </div>
-        <button onClick={save} disabled={saving} className="btn-primary mt-5">
-          {saving ? "Saving…" : "Save preferences"}
-        </button>
+
+        <div className="pt-2 flex items-center justify-between">
+          <button
+            onClick={save}
+            disabled={saving}
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-white shadow-soft hover:bg-primary-hover active:scale-95 transition-all disabled:opacity-50"
+          >
+            {saving ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              <CheckCircle2 className="h-4 w-4" aria-hidden />
+            )}
+            <span>{saving ? "Saving Preferences…" : "Save Matching Preferences"}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Bodoni_Moda } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
@@ -9,9 +9,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Display face: Bodoni Moda stands in for Melloida (the chosen font).
-// Dropping public/fonts/MelloidaDemo.ttf in takes priority via @font-face.
-const displayFont = Bodoni_Moda({
+const displayFont = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-display",

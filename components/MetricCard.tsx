@@ -1,10 +1,8 @@
 "use client";
 
+import React from "react";
 import type { LucideIcon } from "lucide-react";
 import { SpotlightCard, CountUp } from "@/components/reactbits";
-
-// Metric card (PRD §41–§43 dashboards) — ReactBits SpotlightCard with a
-// cursor-tracked spotlight and a CountUp entrance for the value.
 
 export function MetricCard({
   label,
@@ -21,36 +19,65 @@ export function MetricCard({
   hint?: string;
   animateValue?: boolean;
 }) {
-  const tones: Record<string, string> = {
-    default: "bg-stone-100 text-stone-700",
-    success: "bg-green-100 text-green-700",
-    warning: "bg-amber-100 text-amber-700",
-    danger: "bg-rose-100 text-rose-700",
-    info: "bg-sky-100 text-sky-700",
+  const toneClasses: Record<string, { bg: string; text: string; border: string }> = {
+    default: {
+      bg: "bg-surface-soft/60",
+      text: "text-zen-text",
+      border: "border-zen-border",
+    },
+    success: {
+      bg: "bg-primary-faint/60",
+      text: "text-primary",
+      border: "border-primary-soft/50",
+    },
+    warning: {
+      bg: "bg-amber-50",
+      text: "text-amber-800",
+      border: "border-amber-200",
+    },
+    danger: {
+      bg: "bg-rose-50",
+      text: "text-rose-700",
+      border: "border-rose-200",
+    },
+    info: {
+      bg: "bg-sky-50",
+      text: "text-sky-800",
+      border: "border-sky-200",
+    },
   };
 
-  // Parse "45%" / "1,846" style values so CountUp can animate them.
+  const selectedTone = toneClasses[tone] ?? toneClasses.default;
+
+  // Parse numeric values for CountUp
   const numeric = typeof value === "number" ? value : Number(String(value).replace(/[,%\s]/g, ""));
   const isNumeric = Number.isFinite(numeric) && String(value).match(/^[\d,.%\s]+$/);
   const suffix = typeof value === "string" && value.trim().endsWith("%") ? "%" : "";
 
   return (
-    <SpotlightCard className="card p-4 transition-shadow hover:shadow-md sm:p-5">
-      <div className="flex items-start justify-between gap-2">
+    <SpotlightCard className="card p-4 sm:p-5 transition-all duration-300 hover:border-primary-soft hover:shadow-soft">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-xs font-medium uppercase tracking-wide text-stone-500">
+          <p className="truncate text-xs font-mono font-bold uppercase tracking-wider text-zen-muted">
             {label}
           </p>
-          <p className="mt-1.5 text-2xl font-bold tabular-nums text-stone-900 sm:text-3xl">
+          <p className="mt-2 text-2xl sm:text-3xl font-serif font-bold text-ink tabular-nums">
             {animateValue && isNumeric ? (
-              <CountUp value={numeric} suffix={suffix} duration={1.4} />
+              <CountUp value={numeric} suffix={suffix} duration={1.2} />
             ) : (
               value
             )}
           </p>
-          {hint && <p className="mt-1 text-xs text-stone-500">{hint}</p>}
+          {hint && (
+            <p className="mt-1 text-[11px] font-mono font-medium text-primary">
+              ★ {hint}
+            </p>
+          )}
         </div>
-        <span className={`rounded-xl p-2.5 ${tones[tone]}`} aria-hidden>
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${selectedTone.bg} ${selectedTone.text} ${selectedTone.border} shadow-subtle`}
+          aria-hidden
+        >
           <Icon className="h-5 w-5" />
         </span>
       </div>

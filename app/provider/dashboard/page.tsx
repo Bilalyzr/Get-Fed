@@ -11,6 +11,9 @@ import {
   PlusCircle,
   ArrowRight,
   RefreshCw,
+  Clock,
+  Sparkles,
+  ClipboardList,
 } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -74,7 +77,6 @@ export default function ProviderDashboardPage() {
 
   useEffect(() => {
     load();
-    // Near-real-time refresh (PRD §59): poll every 15s.
     const interval = setInterval(() => load(), 15_000);
     return () => clearInterval(interval);
   }, [load]);
@@ -83,7 +85,7 @@ export default function ProviderDashboardPage() {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="skeleton h-28" />
+          <div key={i} className="skeleton h-28 rounded-2xl" />
         ))}
       </div>
     );
@@ -92,35 +94,46 @@ export default function ProviderDashboardPage() {
   const m = data?.metrics;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-8">
+      {/* Top Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zen-border pb-5">
         <div>
-          <h1 className="text-2xl font-extrabold text-stone-900">
-            Provider dashboard
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-primary">
+              Provider Dispatch Terminal
+            </span>
+          </div>
+          <h1 className="text-3xl font-serif font-bold text-ink">
+            Surplus Overview
           </h1>
-          <p className="text-sm text-stone-500">
+          <p className="mt-1 text-sm text-zen-muted">
             {session?.user?.name ? `Welcome back, ${session.user.name}. ` : ""}
-            Here&apos;s your surplus coordination status.
+            Manage active batches, monitor incoming claims, and track verified impact.
           </p>
         </div>
-        <div className="flex gap-2">
+
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => load(true)}
-            className="btn-secondary"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-zen-border bg-white px-3.5 py-2 text-xs font-semibold text-zen-text shadow-subtle hover:bg-surface-soft active:scale-95 transition-all"
             disabled={refreshing}
             aria-label="Refresh dashboard"
           >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} aria-hidden />
-            Refresh
+            <RefreshCw className={`h-3.5 w-3.5 text-zen-muted ${refreshing ? "animate-spin text-primary" : ""}`} />
+            <span>Sync</span>
           </button>
-          <Link href="/provider/listings/new" className="btn-primary">
-            <PlusCircle className="h-4 w-4" aria-hidden />
-            New listing
+          <Link
+            href="/provider/listings/new"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white shadow-soft hover:bg-primary-hover active:scale-95 transition-all"
+          >
+            <PlusCircle className="h-4 w-4" />
+            <span>New Listing</span>
           </Link>
         </div>
       </div>
 
-      {/* Metrics (PRD §41) */}
+      {/* Metrics Row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Active listings" value={m?.activeListings ?? 0} icon={ListOrdered} tone="info" />
         <MetricCard label="Meals available" value={m?.mealsAvailable ?? 0} icon={Utensils} tone="default" />
@@ -129,91 +142,125 @@ export default function ProviderDashboardPage() {
         <MetricCard
           label="Meals recovered"
           value={m?.mealsRecovered ?? 0}
-          icon={PackageCheck}
+          icon={Sparkles}
           tone="success"
           hint="North-star metric"
         />
-        <MetricCard label="Expired food" value={m?.expiredListings ?? 0} icon={CircleAlert} tone="danger" />
+        <MetricCard label="Expired listings" value={m?.expiredListings ?? 0} icon={CircleAlert} tone="danger" />
       </div>
 
-      {/* Active listings */}
-      <section aria-labelledby="active-listings-title">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 id="active-listings-title" className="text-lg font-bold text-stone-900">
-            Active listings
-          </h2>
+      {/* Active Listings Section */}
+      <section aria-labelledby="active-listings-title" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 id="active-listings-title" className="text-xl font-serif font-bold text-ink">
+              Live Surplus Batches
+            </h2>
+            <p className="text-xs font-mono text-zen-muted">
+              Batches visible in discovery until their pickup cutoff
+            </p>
+          </div>
           <Link
             href="/provider/listings"
-            className="flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zen-border bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-surface-soft transition-colors shadow-subtle"
           >
-            View all
-            <ArrowRight className="h-4 w-4" aria-hidden />
+            <span>All listings</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
         {!data || data.activeListings.length === 0 ? (
-          <div className="card p-8 text-center">
-            <p className="text-sm text-stone-500">
-              No active listings. Publish surplus food to get started.
+          <div className="rounded-3xl border border-zen-border bg-white p-10 text-center shadow-subtle">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-soft text-primary border border-zen-border">
+              <Utensils className="h-6 w-6" />
+            </div>
+            <h3 className="mt-4 font-serif text-lg font-bold text-ink">No Active Batches</h3>
+            <p className="mt-1 text-xs text-zen-muted max-w-sm mx-auto">
+              You haven&apos;t published any surplus batches yet today. Log freshly packaged meals before pickup windows close.
             </p>
-            <Link href="/provider/listings/new" className="btn-primary mt-4">
-              <PlusCircle className="h-4 w-4" aria-hidden />
-              Create listing
+            <Link
+              href="/provider/listings/new"
+              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-white shadow-subtle hover:bg-primary-hover active:scale-95 transition-all"
+            >
+              <PlusCircle className="h-4 w-4" />
+              <span>Create First Listing</span>
             </Link>
           </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {data.activeListings.map((listing) => (
               <Link
                 key={listing.id}
                 href={`/provider/listings/${listing.id}`}
-                className="card p-4 transition-shadow hover:shadow-md"
+                className="group rounded-2xl border border-zen-border bg-white p-5 shadow-subtle hover:border-primary-soft hover:shadow-soft transition-all duration-300"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-bold text-stone-900">{listing.foodName}</h3>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="truncate font-serif text-base font-bold text-ink group-hover:text-primary transition-colors">
+                      {listing.foodName}
+                    </h3>
+                    <p className="mt-1 text-xs font-mono text-zen-muted">
+                      {listing.availableQuantity} of {listing.totalQuantity}{" "}
+                      {listing.unit.toLowerCase()} available
+                    </p>
+                  </div>
                   <StatusBadge status={listing.status} />
                 </div>
-                <p className="mt-2 text-sm text-stone-600">
-                  {listing.availableQuantity} of {listing.totalQuantity}{" "}
-                  {listing.unit.toLowerCase()} available · {listing.claimCount} claim
-                  {listing.claimCount === 1 ? "" : "s"}
-                </p>
-                <p className="mt-2 text-sm">
+
+                <div className="mt-4 pt-3 border-t border-zen-border flex items-center justify-between text-xs">
                   <CountdownTimer deadline={listing.pickupDeadline} />
-                </p>
+                  <span className="font-mono text-[11px] font-semibold text-primary bg-primary-faint/60 px-2.5 py-0.5 rounded-full">
+                    {listing.claimCount} {listing.claimCount === 1 ? "claim" : "claims"}
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
         )}
       </section>
 
-      {/* Recent claims */}
-      <section aria-labelledby="recent-claims-title">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 id="recent-claims-title" className="text-lg font-bold text-stone-900">
-            Recent claims
-          </h2>
+      {/* Recent Claims Section */}
+      <section aria-labelledby="recent-claims-title" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 id="recent-claims-title" className="text-xl font-serif font-bold text-ink">
+              Recent Claim Activity
+            </h2>
+            <p className="text-xs font-mono text-zen-muted">
+              Reservations placed by verified recipient organizations
+            </p>
+          </div>
           <Link
             href="/provider/claims"
-            className="flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-800"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zen-border bg-white px-3 py-1.5 text-xs font-semibold text-primary hover:bg-surface-soft transition-colors shadow-subtle"
           >
-            Manage claims
-            <ArrowRight className="h-4 w-4" aria-hidden />
+            <span>Manage claims</span>
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+
         {!data || data.recentClaims.length === 0 ? (
-          <div className="card p-8 text-center text-sm text-stone-500">
-            No claims yet. When recipients reserve your food, activity appears here.
+          <div className="rounded-2xl border border-zen-border bg-white p-8 text-center text-xs font-mono text-zen-muted shadow-subtle">
+            No claims received yet. When verified pantries reserve meals, requests will appear here with dynamic QR scan triggers.
           </div>
         ) : (
-          <ul className="card divide-y divide-stone-100" role="list">
+          <div className="overflow-hidden rounded-2xl border border-zen-border bg-white shadow-subtle divide-y divide-zen-border">
             {data.recentClaims.map((claim) => (
-              <li key={claim.id} className="flex items-center justify-between gap-3 p-4">
+              <div key={claim.id} className="flex items-center justify-between gap-4 p-4 hover:bg-page/40 transition-colors">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-stone-900">
-                    {claim.recipientOrg} reserved {claim.quantity} ·{" "}
-                    {claim.foodName}
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif font-bold text-ink text-sm">
+                      {claim.recipientOrg}
+                    </span>
+                    <span className="rounded-full bg-primary-faint px-2 py-0.5 font-mono text-[10px] font-bold text-primary">
+                      {claim.quantity} portions
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-zen-muted truncate">
+                    Batch: {claim.foodName}
                   </p>
-                  <p className="mt-0.5 text-xs text-stone-400">
+                  <p className="mt-1 text-[11px] font-mono text-zen-faint">
+                    Claimed{" "}
                     {new Date(claim.createdAt).toLocaleString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -223,9 +270,9 @@ export default function ProviderDashboardPage() {
                   </p>
                 </div>
                 <StatusBadge status={claim.status} />
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </section>
     </div>
