@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,7 +40,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="font-sans antialiased min-h-dvh flex flex-col bg-page text-zen-text" suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers><SmoothScroll>{children}</SmoothScroll></Providers>
       </body>
     </html>
   );
