@@ -21,7 +21,10 @@
     "postinstall": "prisma generate",
     "start:7777": "next start -p 7777",
     "start:3777": "next start -p 3777",
-    "db:up": "docker start fws-postgres || docker run -d --name fws-postgres -e POSTGRES_USER=fws -e POSTGRES_PASSWORD=fws_dev_password -e POSTGRES_DB=foodworthsaving -p 5544:5432 postgres:16-alpine"
+    "db:up": "docker start fws-postgres || docker run -d --name fws-postgres -e POSTGRES_USER=fws -e POSTGRES_PASSWORD=fws_dev_password -e POSTGRES_DB=foodworthsaving -p 5544:5432 postgres:16-alpine",
+    "stop": "node scripts/stop.mjs",
+    "hooks:install": "node scripts/install-hooks.mjs",
+    "prepare": "node scripts/install-hooks.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

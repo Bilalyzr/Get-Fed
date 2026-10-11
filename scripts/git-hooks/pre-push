@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Get Fed pre-push gate — blocks pushes that would break the build.
+# Catches exactly the failure class that shipped in 565c1c2 (97 lint errors):
+# unused imports/vars and type errors, which `next build` treats as fatal.
+# Emergency bypass: git push --no-verify
+
+set -e
+echo "[pre-push] running type gate (tsc --noEmit)..."
+if ! npx tsc --noEmit; then
+  echo ""
+  echo "❌ TYPECHECK FAILED — push blocked."
+  echo "   Fix the errors above, commit, then push again."
+  exit 1
+fi
+
+echo "[pre-push] running lint gate (next lint)..."
+if ! npx next lint; then
+  echo ""
+  echo "❌ LINT FAILED — push blocked."
+  echo "   Fix the errors above, commit, then push again."
+  echo "   (emergency bypass: git push --no-verify)"
+  exit 1
+fi
+
+echo "[pre-push] gate passed ✔ — pushing."
