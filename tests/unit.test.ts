@@ -24,6 +24,7 @@ import {
   tokenMatches,
 } from "@/services/qr.service";
 import { createListingSchema } from "@/lib/validators";
+import { sanitizeCallbackUrl } from "@/lib/routing";
 
 // ---------------------------------------------------------------------------
 // Unit tests (PRD §56): state machines, distance, matching, QR security.
@@ -246,5 +247,43 @@ describe("listing validation (PRD §15)", () => {
       preparedAt: new Date(Date.now() + 60 * 60_000),
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("sanitizeCallbackUrl (deep-link safety)", () => {
+  it("accepts relative role-appropriate paths", () => {
+    expect(sanitizeCallbackUrl("PROVIDER", "/provider/listings")).toBe("/provider/listings");
+    expect(sanitizeCallbackUrl("RECIPIENT", "/recipient/claims")).toBe("/recipient/claims");
+    expect(sanitizeCallbackUrl("ADMIN", "/admin/users")).toBe("/admin/users");
+  });
+
+  it("converts same-origin absolute URLs (withAuth default) to their path", () => {
+    (globalThis as { window?: unknown }).window = { location: { origin: "http://localhost:7777" } };
+    try {
+      expect(sanitizeCallbackUrl("PROVIDER", "http://localhost:7777/profile")).toBe("/profile");
+      expect(sanitizeCallbackUrl("ADMIN", "http://localhost:7777/admin/reports")).toBe("/admin/reports");
+    } finally {
+      delete (globalThis as { window?: unknown }).window;
+    }
+  });
+
+  it("rejects external absolute URLs (open-redirect guard) → role home", () => {
+    (globalThis as { window?: unknown }).window = { location: { origin: "http://localhost:7777" } };
+    try {
+      expect(sanitizeCallbackUrl("ADMIN", "https://evil.example.com/admin")).toBe("/admin");
+      expect(sanitizeCallbackUrl("PROVIDER", "//evil.com")).toBe("/provider/dashboard");
+    } finally {
+      delete (globalThis as { window?: unknown }).window;
+    }
+  });
+
+  it("never routes a user into another role's portal", () => {
+    expect(sanitizeCallbackUrl("ADMIN", "/provider/listings")).toBe("/admin");
+    expect(sanitizeCallbackUrl("RECIPIENT", "http://localhost:3000/provider/dashboard")).toBe("/recipient/dashboard");
+  });
+
+  it("auth pages as destination fall back to role home", () => {
+    expect(sanitizeCallbackUrl("RECIPIENT", "/login")).toBe("/recipient/dashboard");
+    expect(sanitizeCallbackUrl("PROVIDER", "/register")).toBe("/provider/dashboard");
   });
 });

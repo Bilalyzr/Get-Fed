@@ -15,9 +15,20 @@ export const ROLE_HOME: Record<string, string> = {
 /** Pages any authenticated user may be sent to. */
 const ROLE_AGNOSTIC_PREFIXES = ["/profile", "/about", "/how-it-works", "/"];
 
-/** Only same-app relative paths are ever honored. */
-function isSafeRelative(url: string | null | undefined): url is string {
-  return !!url && url.startsWith("/") && !url.startsWith("//") && !url.includes("://");
+/** Only same-app paths are ever honored. Absolute URLs are accepted only
+ *  when they are same-origin (withAuth builds absolute callbackUrls), and are
+ *  reduced to their pathname — anything else is rejected outright. */
+function toSafeRelative(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("/") && !url.startsWith("//") && !url.includes("://")) return url;
+  if (
+    typeof window !== "undefined" &&
+    window.location.origin &&
+    url.startsWith(window.location.origin + "/")
+  ) {
+    return url.slice(window.location.origin.length) || "/";
+  }
+  return null;
 }
 
 /**
@@ -30,15 +41,16 @@ export function sanitizeCallbackUrl(
 ): string {
   const home = ROLE_HOME[role ?? ""] ?? "/login";
 
-  if (!isSafeRelative(callbackUrl)) return home;
-  if (callbackUrl === "/login" || callbackUrl === "/register" || callbackUrl === "/login/redirect") {
+  const relative = toSafeRelative(callbackUrl);
+  if (!relative) return home;
+  if (relative === "/login" || relative === "/register" || relative === "/login/redirect") {
     return home;
   }
 
   const allowedArea = role === "PROVIDER" ? "/provider" : role === "RECIPIENT" ? "/recipient" : "/admin";
   const roleAppropriate =
-    callbackUrl.startsWith(allowedArea) ||
-    ROLE_AGNOSTIC_PREFIXES.some((prefix) => callbackUrl === prefix);
+    relative.startsWith(allowedArea) ||
+    ROLE_AGNOSTIC_PREFIXES.some((prefix) => relative === prefix);
 
-  return roleAppropriate ? callbackUrl : home;
+  return roleAppropriate ? relative : home;
 }
