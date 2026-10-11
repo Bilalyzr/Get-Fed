@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { Clock3, MapPin, Scale, QrCode, BellRing, BarChart3, ArrowRight, Sparkles, Layers, Utensils, ChevronRight } from "lucide-react";
+import { Clock3, MapPin, Scale, QrCode, BellRing, BarChart3, ArrowRight, Sparkles, Layers, Leaf, ChevronRight } from "lucide-react";
 import { CustomCursor } from "@/components/cinematic/CustomCursor";
 import { CinematicNavbar } from "@/components/cinematic/CinematicNavbar";
 import { CinematicFooter } from "@/components/cinematic/CinematicFooter";
@@ -315,13 +315,13 @@ export default function LandingPage() {
       <section className="relative py-20 sm:py-28 overflow-hidden bg-page">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
           <div className="relative rounded-3xl border border-zen-border-strong bg-warm p-8 sm:p-16 shadow-elevated overflow-hidden">
-            {/* Ambient gold-emerald glow */}
-            <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-primary-faint/60 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+            {/* Ambient warm light (top-left) + forest glow (bottom-right) */}
+            <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-page/80 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
 
             <div className="relative z-10">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-soft bg-primary-faint px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-primary">
-                <Utensils className="h-3.5 w-3.5" /> Start Saving Meals Today
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-page/80 px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-primary">
+                <Leaf className="h-3.5 w-3.5" /> Start Saving Meals Today
               </span>
 
               <h2 className="mt-4 text-3xl sm:text-5xl font-serif font-bold text-ink leading-tight">
@@ -329,7 +329,7 @@ export default function LandingPage() {
                 <span className="text-primary italic font-serif">a meal saved.</span>
               </h2>
 
-              <p className="mt-4 text-base text-zen-muted max-w-xl mx-auto leading-relaxed">
+              <p className="mt-4 text-base text-ink/75 max-w-xl mx-auto leading-relaxed">
                 Connect your dining hall, cafeteria, or community organization to the real-time food rescue network.
                 Zero subscription fees for verified community partners.
               </p>
@@ -338,7 +338,7 @@ export default function LandingPage() {
                 <Link
                   href={status === "authenticated" ? dashboardUrl : "/register"}
                   data-cursor="START FREE"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold text-white shadow-soft hover:bg-primary-hover active:scale-[0.98] transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-semibold text-page shadow-soft hover:bg-primary-hover active:scale-[0.98] transition-all"
                 >
                   <span>{status === "authenticated" ? "Go to your workspace" : "Get started — it's free"}</span>
                   <ArrowRight className="h-4 w-4" />
@@ -347,7 +347,7 @@ export default function LandingPage() {
                 <Link
                   href="/about"
                   data-cursor="ABOUT"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-zen-border-strong bg-white px-7 py-4 text-sm font-semibold text-ink shadow-subtle hover:bg-surface-soft active:scale-[0.98] transition-all"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-primary/30 bg-page px-7 py-4 text-sm font-semibold text-ink shadow-subtle hover:bg-primary-faint/50 active:scale-[0.98] transition-all"
                 >
                   <span>Read Architecture Manifesto</span>
                 </Link>
