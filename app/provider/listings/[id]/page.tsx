@@ -3,20 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import {
-  Ban,
-  MapPin,
-  Clock3,
-  Utensils,
-  Users,
-  RefreshCw,
-  Loader2,
-  Navigation,
-  UserX,
-  ArrowLeft,
-  Sparkles,
-  Info,
-} from "lucide-react";
+import { Ban, MapPin, Clock3, Utensils, RefreshCw, Navigation, UserX, ArrowLeft } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { MapViewDynamic } from "@/components/MapView";

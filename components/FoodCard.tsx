@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { MapPin, Utensils, Clock3, Navigation, ArrowRight } from "lucide-react";
+import { MapPin, Utensils, Clock3, Navigation } from "lucide-react";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TiltedCard } from "@/components/reactbits";

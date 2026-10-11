@@ -2,23 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import {
-  Users,
-  Store,
-  HeartHandshake,
-  ListOrdered,
-  CircleAlert,
-  PackageCheck,
-  ClipboardX,
-  UserX,
-  ArrowRight,
-  RefreshCw,
-  ShieldCheck,
-  Activity,
-  FileBarChart,
-  CheckCircle2,
-  Clock,
-} from "lucide-react";
+import { Users, Store, HeartHandshake, ListOrdered, CircleAlert, PackageCheck, ClipboardX, UserX, ArrowRight, RefreshCw, ShieldCheck, Activity, CheckCircle2, Clock } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";

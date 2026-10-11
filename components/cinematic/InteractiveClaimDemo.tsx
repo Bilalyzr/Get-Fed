@@ -2,23 +2,11 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  QrCode,
-  ScanLine,
-  ShieldCheck,
-  CheckCircle2,
-  Lock,
-  ArrowRight,
-  Sparkles,
-  RefreshCw,
-  Clock,
-  MapPin,
-  Utensils,
-} from "lucide-react";
+import { QrCode, ScanLine, CheckCircle2, Lock, ArrowRight, Sparkles, RefreshCw, Clock, Utensils } from "lucide-react";
 import confetti from "canvas-confetti";
 
 export function InteractiveClaimDemo() {
-  const [totalSurplus, setTotalSurplus] = useState<number>(50);
+  const [totalSurplus] = useState<number>(50);
   const [claimedQuantity, setClaimedQuantity] = useState<number>(18);
   const [stage, setStage] = useState<"idle" | "locking" | "qr_ready" | "scanning" | "collected">("idle");
   const [tokenHash, setTokenHash] = useState<string>("");

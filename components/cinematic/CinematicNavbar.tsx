@@ -4,16 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import {
-  LayoutDashboard,
-  ArrowRight,
-  Sparkles,
-  Menu,
-  X,
-  Compass,
-  Clock,
-  ShieldCheck,
-} from "lucide-react";
+import { LayoutDashboard, ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 export function CinematicNavbar() {

@@ -2,29 +2,14 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import {
-  Sparkles,
-  ArrowRight,
-  ShieldAlert,
-  CheckCircle2,
-  Clock,
-  MapPin,
-  QrCode,
-  Scale,
-  Users,
-  Building,
-  ShieldCheck,
-  Zap,
-} from "lucide-react";
+import { Sparkles, ArrowRight, ShieldAlert, CheckCircle2, Users, Building, ShieldCheck } from "lucide-react";
 import { CustomCursor } from "@/components/cinematic/CustomCursor";
 import { CinematicNavbar } from "@/components/cinematic/CinematicNavbar";
 import { CinematicFooter } from "@/components/cinematic/CinematicFooter";
 import { InteractiveLifecycleWalkthrough } from "@/components/cinematic/InteractiveLifecycleWalkthrough";
 
 export default function HowItWorksPage() {
-  const { data: session, status } = useSession();
   const [activeRoleTab, setActiveRoleTab] = useState<"provider" | "recipient" | "admin">("provider");
 
   const roleWorkflows = {
@@ -199,7 +184,7 @@ export default function HowItWorksPage() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveRoleTab(tab.id as any)}
+                    onClick={() => setActiveRoleTab(tab.id as "provider" | "recipient" | "admin")}
                     data-cursor={tab.label.toUpperCase()}
                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
                       isActive

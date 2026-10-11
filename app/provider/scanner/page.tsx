@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ScanLine, ArrowLeft, ShieldCheck, CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { ScanLine, ArrowLeft, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { QRScanner } from "@/components/QRScanner";
 import { useToast } from "@/components/Toast";
 

@@ -1,20 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Clock,
-  Play,
-  Pause,
-  RotateCcw,
-  AlertTriangle,
-  CheckCircle2,
-  Trash2,
-  ShieldCheck,
-  Zap,
-  Flame,
-  ArrowRight,
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { Play, Pause, RotateCcw, AlertTriangle, CheckCircle2, Trash2, ShieldCheck, Zap, Flame } from "lucide-react";
 
 interface Milestone {
   minute: number;

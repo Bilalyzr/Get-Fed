@@ -2,27 +2,15 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Sparkles,
-  CheckCircle2,
-  ShieldCheck,
-  Clock,
-  MapPin,
-  QrCode,
-  Scale,
-  BellRing,
-  ArrowRight,
-  Database,
-  Terminal,
-  Zap,
-} from "lucide-react";
+import type { ComponentType } from "react";
+import { Sparkles, ShieldCheck, MapPin, QrCode, Scale, BellRing, ArrowRight, Terminal, Zap } from "lucide-react";
 
 interface Stage {
   number: string;
   name: string;
   shortDesc: string;
   sla: string;
-  icon: any;
+  icon: ComponentType<{ className?: string }>;
   headline: string;
   narrative: string;
   telemetry: {

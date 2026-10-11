@@ -1,33 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import {
-  ShieldCheck,
-  CheckCircle2,
-  Clock,
-  Scale,
-  Lock,
-  ArrowRight,
-  Sparkles,
-  Zap,
-  Flame,
-  AlertTriangle,
-  Layers,
-  Cpu,
-  BarChart3,
-  Server,
-  FileCheck,
-} from "lucide-react";
+import { ShieldCheck, Clock, Scale, Lock, ArrowRight, Sparkles, AlertTriangle, Cpu, BarChart3 } from "lucide-react";
 import { CustomCursor } from "@/components/cinematic/CustomCursor";
 import { CinematicNavbar } from "@/components/cinematic/CinematicNavbar";
 import { CinematicFooter } from "@/components/cinematic/CinematicFooter";
 
 export default function AboutPage() {
-  const { data: session, status } = useSession();
-  const [activePillar, setActivePillar] = useState<number>(0);
 
   const pillars = [
     {

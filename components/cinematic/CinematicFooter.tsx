@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowUp, ShieldCheck, Heart, Sparkles, MapPin, Clock, Scale } from "lucide-react";
+import { ArrowUp, ShieldCheck, MapPin, Clock, Scale } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 export function CinematicFooter() {

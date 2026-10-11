@@ -1,27 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import {
-  Clock3,
-  MapPin,
-  Scale,
-  QrCode,
-  BellRing,
-  BarChart3,
-  ArrowRight,
-  ShieldCheck,
-  Sparkles,
-  Zap,
-  CheckCircle2,
-  Lock,
-  Compass,
-  Layers,
-  Utensils,
-  ChevronRight,
-} from "lucide-react";
+import { Clock3, MapPin, Scale, QrCode, BellRing, BarChart3, ArrowRight, Sparkles, Layers, Utensils, ChevronRight } from "lucide-react";
 import { CustomCursor } from "@/components/cinematic/CustomCursor";
 import { CinematicNavbar } from "@/components/cinematic/CinematicNavbar";
 import { CinematicFooter } from "@/components/cinematic/CinematicFooter";

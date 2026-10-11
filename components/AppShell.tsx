@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
@@ -67,7 +67,6 @@ const COLLAPSE_KEY = "fws-sidebar-collapsed"; // non-critical UI preference (PRD
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 

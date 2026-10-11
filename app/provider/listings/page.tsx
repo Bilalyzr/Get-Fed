@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { PlusCircle, RefreshCw, ChevronRight, Utensils, Clock, AlertTriangle } from "lucide-react";
+import { PlusCircle, RefreshCw, ChevronRight, Utensils } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { useToast } from "@/components/Toast";

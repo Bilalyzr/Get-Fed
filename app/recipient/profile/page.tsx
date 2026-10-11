@@ -2,17 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  ShieldCheck,
-  Crosshair,
-  SlidersHorizontal,
-  Loader2,
-  Building2,
-  MapPin,
-  Clock,
-  Sparkles,
-  CheckCircle2,
-} from "lucide-react";
+import { Crosshair, SlidersHorizontal, Loader2, Building2, MapPin, CheckCircle2 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
 import { recipientPreferenceSchema } from "@/lib/validators";

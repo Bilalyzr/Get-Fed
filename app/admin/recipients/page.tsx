@@ -2,16 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  RefreshCw,
-  HeartHandshake,
-  ShieldCheck,
-  Ban,
-  Undo2,
-  ArrowLeft,
-  Building2,
-  CheckCircle2,
-} from "lucide-react";
+import { RefreshCw, HeartHandshake, ShieldCheck, Ban, Undo2, ArrowLeft, Building2 } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";
 

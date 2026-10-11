@@ -1,20 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Clock,
-  MapPin,
-  ShieldCheck,
-  Zap,
-  Sparkles,
-  CheckCircle2,
-  Utensils,
-  ChevronRight,
-  Radio,
-  Flame,
-  Layers,
-} from "lucide-react";
+
+import { Clock, MapPin, Zap, CheckCircle2, Radio } from "lucide-react";
 
 interface ListingNode {
   id: string;

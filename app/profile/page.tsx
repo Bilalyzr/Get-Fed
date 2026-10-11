@@ -3,20 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import {
-  UserCircle,
-  ShieldCheck,
-  KeyRound,
-  Loader2,
-  Building2,
-  Mail,
-  Phone,
-  CalendarDays,
-  ListOrdered,
-  ClipboardList,
-  Lock,
-  CheckCircle2,
-} from "lucide-react";
+import { ShieldCheck, KeyRound, Loader2, Building2, Mail, Phone, CalendarDays, ListOrdered, ClipboardList, Lock, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useToast } from "@/components/Toast";

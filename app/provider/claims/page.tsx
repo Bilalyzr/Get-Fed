@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { RefreshCw, ScanLine, UserX, ChevronRight, Navigation, ClipboardList, CheckCircle2 } from "lucide-react";
+import { RefreshCw, ScanLine, UserX, ChevronRight, Navigation, ClipboardList } from "lucide-react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { useToast } from "@/components/Toast";

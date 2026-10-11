@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { Crosshair, Filter, Loader2, RefreshCw, SearchX, ShoppingBasket, MapPin } from "lucide-react";
+import { Crosshair, Filter, Loader2, RefreshCw, SearchX } from "lucide-react";
 import { FoodCard, type FoodCardData } from "@/components/FoodCard";
 import { ClaimModal } from "@/components/ClaimModal";
 import { MapViewDynamic } from "@/components/MapView";

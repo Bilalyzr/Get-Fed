@@ -3,18 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import {
-  ListOrdered,
-  Utensils,
-  PackageCheck,
-  CircleAlert,
-  PlusCircle,
-  ArrowRight,
-  RefreshCw,
-  Clock,
-  Sparkles,
-  ClipboardList,
-} from "lucide-react";
+import { ListOrdered, Utensils, PackageCheck, CircleAlert, PlusCircle, ArrowRight, RefreshCw, Sparkles } from "lucide-react";
 import { MetricCard } from "@/components/MetricCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CountdownTimer } from "@/components/CountdownTimer";

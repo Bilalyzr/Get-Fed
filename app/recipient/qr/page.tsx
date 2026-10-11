@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { QrCode, MapPin, Clock3, Utensils, Loader2, Truck, PackageCheck, ArrowLeft, ShieldCheck } from "lucide-react";
+import { QrCode, MapPin, Loader2, Truck, PackageCheck, ArrowLeft, ShieldCheck } from "lucide-react";
 import { QRGenerator } from "@/components/QRGenerator";
 import { CountdownTimer } from "@/components/CountdownTimer";
 import { StatusBadge } from "@/components/StatusBadge";
