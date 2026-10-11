@@ -10,6 +10,7 @@ import { LogIn, AlertTriangle, Loader2 } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validators";
 import { Logo } from "@/components/Logo";
 import { BackButton } from "@/components/BackButton";
+import { FadeContent } from "@/components/reactbits";
 import { sanitizeCallbackUrl } from "@/lib/routing";
 
 function LoginForm() {
@@ -101,7 +102,7 @@ function LoginForm() {
           id="email"
           type="email"
           autoComplete="email"
-          className="block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
+          className="block w-full rounded-lg border-0 bg-page/70 px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
           placeholder="you@organisation.org"
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
@@ -122,7 +123,7 @@ function LoginForm() {
           id="password"
           type="password"
           autoComplete="current-password"
-          className="block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
+          className="block w-full rounded-lg border-0 bg-page/70 px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary"
           placeholder="••••••••"
           aria-invalid={!!errors.password}
           aria-describedby={errors.password ? "password-error" : undefined}
@@ -138,7 +139,7 @@ function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 shadow-subtle active:scale-[0.98]"
+        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-page transition-all hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60 shadow-subtle active:scale-[0.98]"
       >
         {isSubmitting ? (
           <>
@@ -169,30 +170,39 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="relative flex min-h-dvh items-center justify-center bg-page px-4 py-10 font-sans antialiased text-zen-text selection:bg-primary-faint selection:text-ink">
+      {/* Ambient palette glow (matches landing hero) */}
+      <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
+        <div className="h-[420px] w-[620px] rounded-full bg-primary-faint/40 blur-[120px]" />
+        <div className="absolute -top-10 right-10 h-64 w-64 rounded-full bg-warm/60 blur-[100px]" />
+      </div>
+
       <div className="relative w-full max-w-md">
         <div className="mb-6 flex justify-start">
           <BackButton fallbackHref="/" label="Back to home" />
         </div>
-        <div className="mb-8 flex flex-col items-center text-center">
-          <Link href="/" aria-label="Get Fed home" className="transition-transform duration-200 hover:scale-[1.02]">
-            <Logo size={52} />
-          </Link>
-          <div className="mt-4 text-xs font-semibold uppercase tracking-widest text-primary">
-            Sign In
+        <FadeContent>
+          <div className="mb-8 flex flex-col items-center text-center">
+            <Link href="/" aria-label="Get Fed home" className="transition-transform duration-200 hover:scale-[1.02]">
+              <Logo size={52} />
+            </Link>
+            <div className="mt-4 inline-flex items-center rounded-full border border-primary/25 bg-page/80 px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-primary">
+              Sign In
+            </div>
+            <h1 className="mt-2 text-2xl font-serif font-bold text-ink sm:text-3xl">
+              Welcome back
+            </h1>
+            <p className="mt-1.5 text-sm text-zen-muted">
+              Coordinate surplus food in real time with verified integrity.
+            </p>
           </div>
-          <h1 className="mt-1 text-2xl font-serif font-bold text-ink sm:text-3xl">
-            Welcome back
-          </h1>
-          <p className="mt-1.5 text-sm text-zen-muted">
-            Coordinate surplus food in real time with verified integrity.
-          </p>
-        </div>
 
-        <div className="rounded-2xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle">
-          <Suspense fallback={<div className="skeleton h-80" aria-label="Loading sign in form" />}>
-            <LoginForm />
-          </Suspense>
-        </div>
+          <div className="relative overflow-hidden rounded-2xl border border-zen-border bg-white p-6 shadow-soft sm:p-8">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-hover via-primary to-primary-soft" aria-hidden />
+            <Suspense fallback={<div className="skeleton h-80" aria-label="Loading sign in form" />}>
+              <LoginForm />
+            </Suspense>
+          </div>
+        </FadeContent>
       </div>
     </div>
   );

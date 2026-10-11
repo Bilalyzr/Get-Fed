@@ -9,10 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserPlus, AlertTriangle, Building2, Store, HeartHandshake, Loader2, ArrowRight } from "lucide-react";
 import { registerSchema, type RegisterInput } from "@/lib/validators";
 import { Logo } from "@/components/Logo";
+import { BackButton } from "@/components/BackButton";
 import { FadeContent } from "@/components/reactbits";
 
 const inputClass =
-  "block w-full rounded-lg border-0 bg-white px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary";
+  "block w-full rounded-lg border-0 bg-page/70 px-3.5 py-2.5 text-sm text-ink ring-1 ring-inset ring-zen-border placeholder:text-zen-faint focus:ring-2 focus:ring-inset focus:ring-primary";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -75,8 +76,12 @@ export default function RegisterPage() {
   if (pendingVerification) {
     return (
       <div className="relative flex min-h-dvh items-center justify-center bg-page px-4 font-sans antialiased text-zen-text selection:bg-primary-faint selection:text-ink">
+        <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
+          <div className="h-[420px] w-[620px] rounded-full bg-primary-faint/40 blur-[120px]" />
+        </div>
         <FadeContent>
-          <div className="relative w-full max-w-md rounded-2xl border border-zen-border bg-white p-8 text-center shadow-subtle">
+          <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-zen-border bg-white p-8 text-center shadow-soft">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-hover via-primary to-primary-soft" aria-hidden />
             <span className="inline-flex rounded-2xl bg-amber-50 p-3 text-amber-700 ring-1 ring-amber-300" aria-hidden>
               <HeartHandshake className="h-7 w-7" />
             </span>
@@ -89,7 +94,7 @@ export default function RegisterPage() {
             <div className="mt-6">
               <Link
                 href="/login"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-hover shadow-subtle"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-page transition-all hover:bg-primary-hover shadow-subtle active:scale-[0.98]"
               >
                 <span>Go to sign in</span>
                 <ArrowRight className="h-4 w-4" />
@@ -103,16 +108,25 @@ export default function RegisterPage() {
 
   return (
     <div className="relative flex min-h-dvh items-center justify-center bg-page px-4 py-10 font-sans antialiased text-zen-text selection:bg-primary-faint selection:text-ink">
+      {/* Ambient palette glow (matches landing hero + login) */}
+      <div className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center overflow-hidden">
+        <div className="h-[420px] w-[620px] rounded-full bg-primary-faint/40 blur-[120px]" />
+        <div className="absolute -top-10 right-10 h-64 w-64 rounded-full bg-warm/60 blur-[100px]" />
+      </div>
+
       <div className="relative w-full max-w-md">
+        <div className="mb-6 flex justify-start">
+          <BackButton fallbackHref="/" label="Back to home" />
+        </div>
         <FadeContent>
           <div className="mb-6 flex flex-col items-center text-center">
             <Link href="/" aria-label="Get Fed home" className="transition-transform duration-200 hover:scale-[1.02]">
               <Logo size={52} />
             </Link>
-            <div className="mt-4 text-xs font-semibold uppercase tracking-widest text-primary">
+            <div className="mt-4 inline-flex items-center rounded-full border border-primary/25 bg-page/80 px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-primary">
               Create an Account
             </div>
-            <h1 className="mt-1 text-2xl font-serif font-bold text-ink sm:text-3xl">
+            <h1 className="mt-2 text-2xl font-serif font-bold text-ink sm:text-3xl">
               Join <span className="text-primary italic font-serif">Get Fed</span>
             </h1>
             <p className="mt-1.5 text-sm text-zen-muted">
@@ -122,9 +136,10 @@ export default function RegisterPage() {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4 rounded-2xl border border-zen-border bg-white p-6 sm:p-8 shadow-subtle"
+            className="relative space-y-4 overflow-hidden rounded-2xl border border-zen-border bg-white p-6 shadow-soft sm:p-8"
             noValidate
           >
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-hover via-primary to-primary-soft" aria-hidden />
             {serverError && (
               <p
                 role="alert"
@@ -144,7 +159,7 @@ export default function RegisterPage() {
                 <label
                   className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border p-3 text-sm font-medium transition-all ${
                     role === "PROVIDER"
-                      ? "border-primary bg-primary-faint text-primary-hover font-semibold ring-1 ring-primary-soft"
+                      ? "border-primary bg-primary/10 text-primary-hover font-semibold ring-1 ring-primary-soft"
                       : "border-zen-border bg-white text-zen-muted hover:border-zen-border-strong hover:bg-surface-soft"
                   }`}
                 >
@@ -156,7 +171,7 @@ export default function RegisterPage() {
                 <label
                   className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border p-3 text-sm font-medium transition-all ${
                     role === "RECIPIENT"
-                      ? "border-primary bg-primary-faint text-primary-hover font-semibold ring-1 ring-primary-soft"
+                      ? "border-primary bg-primary/10 text-primary-hover font-semibold ring-1 ring-primary-soft"
                       : "border-zen-border bg-white text-zen-muted hover:border-zen-border-strong hover:bg-surface-soft"
                   }`}
                 >
@@ -249,7 +264,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 shadow-subtle active:scale-[0.98]"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-page transition-all hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 shadow-subtle active:scale-[0.98]"
             >
               {isSubmitting ? (
                 <>
