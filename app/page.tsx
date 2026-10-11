@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Clock3, MapPin, Scale, QrCode, BellRing, BarChart3, ArrowRight, Sparkles, Layers, Leaf, ChevronRight } from "lucide-react";
 import { CustomCursor } from "@/components/cinematic/CustomCursor";
 import { CinematicNavbar } from "@/components/cinematic/CinematicNavbar";
@@ -15,6 +15,7 @@ import { CountUp } from "@/components/reactbits";
 
 export default function LandingPage() {
   const { data: session, status } = useSession();
+  const reduceMotion = useReducedMotion();
   const role = session?.user?.role;
   const dashboardUrl =
     role === "PROVIDER"
@@ -143,11 +144,15 @@ export default function LandingPage() {
               { label: "Listing Published In", value: 60, suffix: " sec", sub: "Zero friction" },
               { label: "Handover Verified", value: 100, suffix: "%", sub: "HMAC QR signed" },
               { label: "Allocation Accuracy", value: 100, suffix: "%", sub: "Row-locked ACID" },
-            ].map((stat) => (
-              <div
+            ].map((stat, i) => (
+              <motion.div
                 key={stat.label}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
                 data-cursor="STAT"
-                className="group relative overflow-hidden rounded-2xl border border-zen-border bg-white/90 p-5 shadow-subtle hover:border-primary-soft hover:shadow-soft transition-all duration-300"
+                className="group relative overflow-hidden rounded-2xl border border-zen-border bg-white/90 p-5 shadow-subtle hover:border-primary-soft hover:shadow-soft transition-[border-color,box-shadow] duration-300"
               >
                 <div className="text-2xl sm:text-4xl font-serif font-bold text-primary">
                   <CountUp value={stat.value} suffix={stat.suffix} duration={1.6} />
@@ -156,7 +161,7 @@ export default function LandingPage() {
                 <div className="mt-0.5 text-[11px] font-mono text-zen-muted uppercase tracking-wider">
                   {stat.sub}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -176,7 +181,13 @@ export default function LandingPage() {
       {/* ---------------------------------------------------------------- */}
       <section className="relative py-20 sm:py-28" aria-labelledby="engines-title">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            className="text-center max-w-3xl mx-auto"
+          >
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary-soft bg-primary-faint/60 px-3.5 py-1 text-xs font-mono font-bold uppercase tracking-wider text-primary">
               <Layers className="h-3.5 w-3.5" /> Core Architecture
             </span>
@@ -187,7 +198,7 @@ export default function LandingPage() {
               Standard bulletin boards fail under time pressure. Get Fed is engineered with six transactional engines
               that guarantee every portion is accounted for, routed in time, and verified at handover.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
@@ -233,11 +244,18 @@ export default function LandingPage() {
                 desc: "Our north-star metric is strictly verified meals collected, not food advertised. Real-time CO2 avoidance and meal counts sync to institutional sustainability dashboards.",
                 badge: "Audit-Grade",
               },
-            ].map((eng) => (
-              <div
+            ].map((eng, i) => (
+              <motion.div
                 key={eng.title}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.55, delay: i * 0.07, ease: "easeOut" }}
+                className="h-full"
+              >
+              <div
                 data-cursor="ENGINE"
-                className="group relative flex flex-col justify-between rounded-3xl border border-zen-border bg-white p-7 shadow-subtle hover:-translate-y-1 hover:border-primary-soft hover:shadow-soft transition-all duration-300"
+                className="group relative flex flex-col justify-between h-full rounded-3xl border border-zen-border bg-white p-7 shadow-subtle hover:-translate-y-1 hover:border-primary-soft hover:shadow-soft transition-all duration-300"
               >
                 <div>
                   <div className="flex items-center justify-between">
@@ -258,6 +276,7 @@ export default function LandingPage() {
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -277,7 +296,13 @@ export default function LandingPage() {
       {/* ---------------------------------------------------------------- */}
       <section className="relative py-20 sm:py-24 border-t border-zen-border bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            className="text-center max-w-2xl mx-auto"
+          >
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-primary">
               Institutional Network
             </span>
@@ -287,7 +312,7 @@ export default function LandingPage() {
             <p className="mt-3 text-sm text-zen-muted">
               Built to meet university compliance, food hygiene standards, and municipal zero-waste mandates.
             </p>
-          </div>
+          </motion.div>
 
           <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
@@ -295,15 +320,19 @@ export default function LandingPage() {
               { type: "Youth Shelters", role: "Verified Recipient", desc: "Instant meal collection" },
               { type: "Hostel Kitchens", role: "Surplus Provider", desc: "Daily evening surplus" },
               { type: "Community Pantries", role: "Verified Recipient", desc: "Local neighborhood drop" },
-            ].map((node) => (
-              <div
+            ].map((node, i) => (
+              <motion.div
                 key={node.type}
+                initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: "easeOut" }}
                 className="rounded-2xl border border-zen-border bg-page/60 p-5 text-center shadow-subtle hover:border-primary-soft transition-colors"
               >
                 <div className="text-xs font-mono font-bold uppercase text-primary">{node.role}</div>
                 <div className="mt-1 font-serif text-lg font-bold text-ink">{node.type}</div>
                 <p className="mt-1 text-xs text-zen-muted">{node.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -314,7 +343,13 @@ export default function LandingPage() {
       {/* ---------------------------------------------------------------- */}
       <section className="relative py-20 sm:py-28 overflow-hidden bg-page">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="relative rounded-3xl border border-zen-border-strong bg-warm p-8 sm:p-16 shadow-elevated overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 32, scale: reduceMotion ? 1 : 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.65, ease: "easeOut" }}
+            className="relative rounded-3xl border border-zen-border-strong bg-warm p-8 sm:p-16 shadow-elevated overflow-hidden"
+          >
             {/* Ambient warm light (top-left) + forest glow (bottom-right) */}
             <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-page/80 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
@@ -353,7 +388,7 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
