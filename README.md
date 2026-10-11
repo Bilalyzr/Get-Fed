@@ -8,6 +8,21 @@ A mobile-first, role-based, location-aware web application that connects institu
 
 ---
 
+## Run it locally (3 commands)
+
+```bash
+npm run db:up        # 1. start the database (Docker — safe to re-run)
+npm run dev          # 2. start the app (development, hot reload)
+                     # 3. open http://localhost:7777  ← always this URL
+```
+
+Demo logins (password `Password123!`): `events@college.edu` (provider) · `hope@kitchen.org` (recipient) · `admin@getfed.dev` (admin)
+
+**Production mode instead:** `npm run build` then `npm run start:7777` — same URL.
+> Rule of thumb: stop the dev server (Ctrl+C) before running `npm run build`.
+
+---
+
 ## Problem Statement
 
 College events and canteens regularly end up with usable surplus food while potential recipients lack timely information. Food gets wasted because:
