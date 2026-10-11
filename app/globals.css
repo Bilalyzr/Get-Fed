@@ -36,6 +36,15 @@
   --font-display-stack: "Melloida", "Bodoni Moda", Georgia, serif;
 }
 
+/* ---- Navbar mobile menu drop-in ---- */
+@keyframes navbar-drop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-navbar-drop {
+  animation: navbar-drop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* ---- Lenis smooth scroll base ---- */
 html.lenis,
 html.lenis body {
